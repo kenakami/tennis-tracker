@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { AntDesign } from '@expo/vector-icons'; 
 
 import Home from './src/Home';
 
@@ -53,7 +53,18 @@ function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen
+          name="Home"
+          component={Home}
+          options = {{
+            headerRight: () => (
+              <TouchableOpacity>
+                 <AntDesign name="plus" size={21} color= "black"/>
+              </TouchableOpacity>
+            ),
+            headerRightContainerStyle: {marginRight:'4%'}
+          }}
+        />
         <Stack.Screen name="Details" component={DetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
