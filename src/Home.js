@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView , Modal} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity } from 'react-native';
 
 class Home extends React.Component {
 
@@ -7,7 +7,10 @@ class Home extends React.Component {
     return (
       <SafeAreaView style = {{flex: 1}}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          <View style = {{width: '90%', height: '11%', borderRadius: '10%', alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: '2%', padding: '2%'}}>
+          <TouchableOpacity
+            style = {{width: '90%', height: '11%', borderRadius: '10%', alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: '2%', padding: '2%'}}
+            onPress={() => this.props.navigation.navigate('Details')}
+          >
             <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
               <View>
                 <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
@@ -36,7 +39,7 @@ class Home extends React.Component {
                 </View>
               </View>
             </View>
-          </View>
+          </TouchableOpacity>
         </ScrollView>
     </SafeAreaView>
     );

@@ -49,7 +49,7 @@ function DetailsScreen() {
 }
 
 const Stack = createStackNavigator();
-const debug = 1
+const debug = 0
 
 function App() {
   if (debug) {
