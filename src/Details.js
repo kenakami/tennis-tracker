@@ -1,8 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, ScrollView , Modal} from 'react-native';
+import SwitchSelector from 'react-native-switch-selector';
 
+const options = [
+    { label: 'Match Stats'},
+    { label: 'Match Log'}
+];
 class Details extends React.Component {
-
+    
   render() {
     return (
         <SafeAreaView style = {{flex: 1}}>
@@ -37,6 +42,7 @@ class Details extends React.Component {
                         </View>
                     </View>
                 </View>
+                <SwitchSelector options={options} initial={0} selectedColor = 'blue' buttonColor = '#dcdcdc' hasPadding = {true} style = {{marginTop:'5%'}} />
                 <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style = {{fontSize: 35, marginLeft: '10%', marginTop: '8%'}}>
                         Ken
