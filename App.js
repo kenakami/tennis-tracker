@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { AntDesign } from '@expo/vector-icons'; 
 
 import Home from './src/Home';
+import Details from './src/Details.js';
 
 /*
 export default function App() {
@@ -33,7 +35,6 @@ function HomeScreen({ navigation }) {
       <Text>Home Screen</Text>
       <Button
         title="Go to Details"
-        onPress={() => navigation.navigate('Details')}
       />
     </View>
   );
@@ -48,13 +49,32 @@ function DetailsScreen() {
 }
 
 const Stack = createStackNavigator();
+const debug = 1
 
 function App() {
+  if (debug) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Match Details">
+          <Stack.Screen name="Match Details" component={Details} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Match History" 
+          component={Home}
+          options = {{
+            headerRight: () => (
+              <TouchableOpacity>
+                 <AntDesign name="plus" size={21} color= "black"/>
+              </TouchableOpacity>
+            ),
+            headerRightContainerStyle: {marginRight:'4%'}
+           }} />
+        <Stack.Screen name="Details" component={Details} />
       </Stack.Navigator>
     </NavigationContainer>
   );
