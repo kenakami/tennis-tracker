@@ -210,7 +210,7 @@ class Details extends React.Component {
   render() {
     return (
         <SafeAreaView style = {{flex: 1}}>
-                <View style = {{width: '90%', height: '11%', borderRadius: '10%', alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: '2%', padding: '2%'}}>
+                <View style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}>
                     <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
                         <View>
                             <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>

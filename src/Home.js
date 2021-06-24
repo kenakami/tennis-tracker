@@ -8,7 +8,7 @@ class Home extends React.Component {
       <SafeAreaView style = {{flex: 1}}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
           <TouchableOpacity
-            style = {{width: '90%', height: '11%', borderRadius: '10%', alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: '2%', padding: '2%'}}
+            style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
             onPress={() => this.props.navigation.navigate('Details')}
           >
             <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
