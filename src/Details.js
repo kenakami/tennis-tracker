@@ -9,10 +9,10 @@ function test() {
     return (
         <ScrollView>
             <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style = {{fontSize: 35, marginLeft: '10%', marginTop: '8%'}}>
+                <Text style = {{fontSize: 35, marginLeft: '10%'}}>
                     Ken
                 </Text>
-                <Text style = {{fontSize: 35, marginRight: '10%', marginTop: '8%'}}>
+                <Text style = {{fontSize: 35, marginRight: '10%'}}>
                     Jun
                 </Text>
             </View>

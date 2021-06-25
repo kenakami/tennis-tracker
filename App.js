@@ -27,14 +27,7 @@ function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Match History" 
           component={Home}
-          options = {{
-            headerRight: () => (
-              <TouchableOpacity>
-                 <AntDesign name="plus" size={21} color= "black"/>
-              </TouchableOpacity>
-            ),
-            headerRightContainerStyle: {marginRight:'4%'}
-           }} />
+          />
         <Stack.Screen name="Details" component={Details} />
       </Stack.Navigator>
     </NavigationContainer>
