@@ -43,15 +43,16 @@ class Home extends React.Component {
           />
         </View>
         <TouchableOpacity
-            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
+          onPress={() => this.props.navigation.navigate('Match')}
+          style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
         >
           <Text style = {{color: '#ffffff'}}>
             Create match
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-            onPress = {() => this.setState({modalVisible: !this.state.modalVisible})}
-            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#f0e9e9', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
+          onPress = {() => this.setState({modalVisible: !this.state.modalVisible})}
+          style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#f0e9e9', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
         >
           <Text>
             Cancel
