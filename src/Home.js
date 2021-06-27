@@ -111,7 +111,7 @@ class Home extends React.Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.navigate('Match');
+            this.props.navigation.navigate('Match', {/* TODO pass info here */});
             this.setState({modalVisible: !this.state.modalVisible})
           }}
           style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}

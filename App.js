@@ -11,7 +11,13 @@ import Details from './src/Details.js';
 import Match from './src/Match.js';
 
 const Stack = createStackNavigator();
+
 const debug = 0;
+const setting = {
+  p1_name: "Ken",
+  p2_name: "Jun",
+  best_of: 1,
+}
 
 function App() {
   if (debug) {
