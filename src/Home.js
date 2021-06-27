@@ -3,6 +3,67 @@ import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Mo
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
+const empty_data = {
+  match: {
+    set: [{
+      game: [
+        {
+          point: [],
+          p1: 0,
+          p2: 0,
+        },
+      ],
+      p1: 0,
+      p2: 0,
+    }]
+  },
+  p1_name: "",
+  p2_name: "",
+}
+
+const data = {
+  match: {
+    set: [{
+      game: [
+        {
+          point: [true, true, true, true],
+          p1: 4,
+          p2: 0,
+        },
+        {
+          point: [true, false, true, true, true],
+          p1: 4,
+          p2: 1,
+        },
+        {
+          point: [true, false, false, true, true, true],
+          p1: 4,
+          p2: 2,
+        },
+        {
+          point: [true, false, false, false, true, true, true],
+          p1: 4,
+          p2: 3,
+        },
+        {
+          point: [true, true, true, true],
+          p1: 4,
+          p2: 0,
+        },
+        {
+          point: [true, true, true, true],
+          p1: 4,
+          p2: 0,
+        },
+      ],
+      p1: 6,
+      p2: 0,
+    }]
+  },
+  p1_name: "Foo",
+  p2_name: "Bar",
+}
+
 class Home extends React.Component {
 
   constructor(props) {

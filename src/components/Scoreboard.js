@@ -1,8 +1,42 @@
 import React from 'react';
-import { Text, View, SafeAreaView, ScrollView , TouchableOpacity } from 'react-native';
+import { Text, View, SafeAreaView, ScrollView , TouchableOpacity, ActivityIndicator } from 'react-native';
 
 class Scoreboard extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      match: {
+        set: [{
+          game: [
+            {
+              point: [],
+              p1: 0,
+              p2: 0,
+            },
+          ],
+          p1: 0,
+          p2: 0,
+        }]
+      },
+      p1_name: "",
+      p2_name: "",
+    }
+  }
+  componentDidMount() {
+    if (this.props.data) {
+      this.setState(this.props.data);
+    }
+  }
   render() {
+    if (false) {
+      return (
+        <View
+          style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', justifyContent: 'center' }}
+        >
+          <ActivityIndicator size="large" color="black" />
+        </View>
+      )
+    }
     return(
       <TouchableOpacity
         style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
@@ -11,29 +45,25 @@ class Scoreboard extends React.Component {
         <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
           <View>
             <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
-              Ken
+              {this.state.p1_name}
             </Text>
             <Text style = {{fontSize: 17, fontWeight: '500'}}>
-              Jun
+              {this.state.p2_name}
             </Text>
           </View>
           <View style = {{flexDirection: 'row'}}>
-            <View style = {{alignSelf: 'flex-end'}}>
-              <Text style = {{fontSize: 17, fontWeight: '300', paddingBottom: '2%', paddingRight: '3%'}}>
-                0
-              </Text>
-              <Text style = {{fontSize: 17, fontWeight: '500'}}>
-                6
-              </Text>
-            </View>
-            <View style = {{alignSelf: 'flex-end'}}>
-              <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                6
-              </Text>
-              <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                0
-              </Text>
-            </View>
+            {
+              this.state.match.set.map(set => (
+                <View style = {{alignSelf: 'flex-end'}}>
+                  <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
+                    {set.p1}
+                  </Text>
+                  <Text style = {{fontSize: 17, fontWeight: '300'}}>
+                    {set.p2}
+                  </Text>
+                </View>
+              ))
+            }
           </View>
         </View>
       </TouchableOpacity>
