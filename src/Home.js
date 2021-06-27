@@ -47,7 +47,7 @@ class Home extends React.Component {
           style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
         >
           <Text style = {{color: '#ffffff'}}>
-            Create match
+            Continue
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
