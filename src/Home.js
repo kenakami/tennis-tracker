@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
@@ -70,11 +70,17 @@ class Home extends React.Component {
     super(props)
     this.state = {
       modalVisible: false,
+      firstModalVisible: false,
       radio_props: [
         {label: 'Simple', value: 0 },
         {label: 'Detailed', value: 1 }
       ],
-      details: 0
+      radio_props1: [
+        {label: 'Player 1 Serving', value: 0 },
+        {label: 'Player 2 Serving', value: 1 }
+      ],
+      details: 0,
+      player1_serving: 0
     }
   }
 
@@ -104,11 +110,14 @@ class Home extends React.Component {
           />
         </View>
         <TouchableOpacity
-          onPress={() => this.props.navigation.navigate('Match')}
+          onPress={() => {
+            this.props.navigation.navigate('Match');
+            this.setState({modalVisible: !this.state.modalVisible})
+          }}
           style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
         >
           <Text style = {{color: '#ffffff'}}>
-            Continue
+            Create Match
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -125,9 +134,69 @@ class Home extends React.Component {
     )
   }
 
+  renderInformation() {
+    return (
+      <View style={styles.centeredView}>
+        <View style={styles.firstModalView}>
+          <View>
+            <Text style  = {{fontSize: 20, paddingBottom: '3%'}}>
+              Player Information
+            </Text>
+            <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: 0.7,
+              }}
+            />
+          </View>
+          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center', marginTop: '7%'}}>
+            <Text>
+              Player One
+            </Text>
+            <TextInput
+              style={styles.input}
+            />
+          </View>
+          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center'}}>
+            <Text>
+              Player Two
+            </Text>
+            <TextInput
+              style={styles.input}
+            />
+          </View>
+          <View style = {{alignSelf: 'flex-start'}}>
+            <RadioForm
+              radio_props={this.state.radio_props1}
+              initial={0}
+              onPress={(value) => {this.setState({player1_serving: value})}}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({firstModalVisible: !this.state.firstModalVisible})
+              this.setState({modalVisible: !this.state.modalVisible})
+            }}
+            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}>
+            <Text style = {{color: '#ffffff'}}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}
+            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#f0e9e9', padding: '2%', alignItems: 'center', justifyContent: 'center'}}>
+            <Text>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
   componentDidMount(){
     this.props.navigation.setOptions({headerRight: () => (
-      <TouchableOpacity onPress = {() => this.setState({modalVisible: !this.state.modalVisible})}>
+      <TouchableOpacity onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}>
           <AntDesign name="plus" size={21} color= "black"/>
       </TouchableOpacity>
     ),
@@ -180,6 +249,13 @@ class Home extends React.Component {
           <Modal
             animationType="slide"
             transparent={true}
+            visible={this.state.firstModalVisible}
+            >
+              {this.renderInformation()}
+          </Modal>
+          <Modal
+            animationType="slide"
+            transparent={true}
             visible={this.state.modalVisible}
             >
               {this.renderModal()}
@@ -215,5 +291,29 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '40%'
   },
+  firstModalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '80%',
+    height: '48%'
+  },
+  input: {
+    height: '120%',
+    width: '50%',
+    borderRadius: 5,
+    borderColor: 'gray',
+    borderWidth: 2
+  }
 });
 export default Home;
