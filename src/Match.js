@@ -86,6 +86,7 @@ class Match extends React.Component {
    * @param p   Player to award point (true = p1, false = p2)
    */
   point(p) {
+    if (this.state.done) return;
     const winner = p ? 'p1' : 'p2';
     let match = this.state.match;
     let cur_game = match.set.last().game.last();
@@ -104,9 +105,8 @@ class Match extends React.Component {
       if (Math.abs(cur_set.p1-cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
         match[winner]++;
         // Match
-        if (Math.max(match.p1, match.p2) >= Math.trunc(match.best_of/2)+1) {
-          // game set match
-          alert('match');
+        if (Math.max(match.p1, match.p2) >= Math.trunc(this.state.best_of/2)+1) {
+          this.setState({done: true});
           this.setState({match: match});
           alert(`Game, Set, Match!\nWon by ${p ? match.p1_name : match.p2.name}`);
           return;
