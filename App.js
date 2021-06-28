@@ -12,7 +12,7 @@ import Match from './src/Match.js';
 
 const Stack = createStackNavigator();
 
-const debug = 0;
+const debug = 1;
 const setting = {
   p1_name: "Ken",
   p2_name: "Jun",

@@ -1,6 +1,18 @@
 import React from 'react';
 import { Text, View, SafeAreaView, ScrollView , TouchableOpacity, ActivityIndicator } from 'react-native';
 
+Array.prototype.last = function(){
+    return this[this.length - 1];
+};
+
+const score = {
+  0: 0,
+  1: 15,
+  2: 30,
+  3: 40,
+  4: 'Ad',
+}
+
 class Scoreboard extends React.Component {
   constructor(props) {
     super(props);
@@ -22,11 +34,13 @@ class Scoreboard extends React.Component {
       p2_name: "",
     }
   }
+
   componentDidMount() {
     if (this.props.data) {
       this.setState(this.props.data);
     }
   }
+
   render() {
     if (false) {
       return (
@@ -53,6 +67,16 @@ class Scoreboard extends React.Component {
           </View>
           <View style = {{flexDirection: 'row'}}>
             {
+              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"set"}>
+                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
+                  {this.props.data.match.p1}
+                </Text>
+                <Text style = {{fontSize: 17, fontWeight: '300'}}>
+                  {this.props.data.match.p2}
+                </Text>
+              </View>
+            }
+            {
               this.props.data.match.set.map((set, index) => (
                 <View style = {{alignSelf: 'flex-end'}} key={"set"+index}>
                   <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
@@ -63,6 +87,16 @@ class Scoreboard extends React.Component {
                   </Text>
                 </View>
               ))
+            }
+            {
+              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"point"}>
+                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
+                  {score[this.props.data.match.set.last().game.last().p1]}
+                </Text>
+                <Text style = {{fontSize: 17, fontWeight: '300'}}>
+                  {score[this.props.data.match.set.last().game.last().p2]}
+                </Text>
+              </View>
             }
           </View>
         </View>
