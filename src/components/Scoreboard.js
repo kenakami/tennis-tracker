@@ -91,10 +91,10 @@ class Scoreboard extends React.Component {
             {
               <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"point"}>
                 <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                  {score[this.props.data.match.set.last().game.last().p1]}
+                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
                 </Text>
                 <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                  {score[this.props.data.match.set.last().game.last().p2]}
+                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
                 </Text>
               </View>
             }

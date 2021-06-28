@@ -108,31 +108,22 @@ class Match extends React.Component {
         if (Math.max(match.p1, match.p2) >= Math.trunc(this.state.best_of/2)+1) {
           this.setState({done: true});
           this.setState({match: match});
-          alert(`Game, Set, Match!\nWon by ${p ? match.p1_name : match.p2.name}`);
+          alert(`Game, Set, Match!\nWon by ${p ? this.state.p1_name : this.state.p2_name}`);
           return;
-        } else {
-          match.set.push({
-            game: [
-              {
-                point: [],
-                p1: 0,
-                p2: 0,
-              },
-            ],
-            p1: 0,
-            p2: 0,
-          });
-        }
-      } else {
-        match.set.last().game.push({
-          point: [],
+        } 
+        match.set.push({
+          game: [],
           p1: 0,
           p2: 0,
         });
       }
+      match.set.last().game.push({
+        point: [],
+        p1: 0,
+        p2: 0,
+      });
     }
     this.setState({match: match});
-    console.log(this.state);
   }
 
   /**
@@ -151,14 +142,14 @@ class Match extends React.Component {
         <Scoreboard data={this.state} />
         <View style={{flexDirection: "row", justifyContent: "center"}}>
           <TouchableOpacity style={{padding: '2%'}} onPress={() => this.point(true)}>
-            <Text style={{fontSize: 64}}>{score[this.state.match.set.last().game.last().p1]}</Text>
+            <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p1]}</Text>
             <Text style={{fontSize: 32}}>{this.state.p1_name}</Text>
           </TouchableOpacity>
           <View style={{padding: '2%'}}>
             <Text style={{fontSize: 64}}>-</Text>
           </View>
           <TouchableOpacity style={{padding: '2%'}} onPress={() => this.point(false)}>
-            <Text style={{fontSize: 64}}>{score[this.state.match.set.last().game.last().p2]}</Text>
+            <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p2]}</Text>
             <Text style={{fontSize: 32}}>{this.state.p2_name}</Text>
           </TouchableOpacity>
         </View>
