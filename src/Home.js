@@ -2,85 +2,26 @@ import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
-
-const empty_data = {
-  match: {
-    set: [{
-      game: [
-        {
-          point: [],
-          p1: 0,
-          p2: 0,
-        },
-      ],
-      p1: 0,
-      p2: 0,
-    }]
-  },
-  p1_name: "",
-  p2_name: "",
-}
-
-const data = {
-  match: {
-    set: [{
-      game: [
-        {
-          point: [true, true, true, true],
-          p1: 4,
-          p2: 0,
-        },
-        {
-          point: [true, false, true, true, true],
-          p1: 4,
-          p2: 1,
-        },
-        {
-          point: [true, false, false, true, true, true],
-          p1: 4,
-          p2: 2,
-        },
-        {
-          point: [true, false, false, false, true, true, true],
-          p1: 4,
-          p2: 3,
-        },
-        {
-          point: [true, true, true, true],
-          p1: 4,
-          p2: 0,
-        },
-        {
-          point: [true, true, true, true],
-          p1: 4,
-          p2: 0,
-        },
-      ],
-      p1: 6,
-      p2: 0,
-    }]
-  },
-  p1_name: "Foo",
-  p2_name: "Bar",
-}
+import { Ionicons } from '@expo/vector-icons'; 
 
 class Home extends React.Component {
-
   constructor(props) {
     super(props)
     this.state = {
       modalVisible: false,
       firstModalVisible: false,
       radio_props: [
-        {label: 'Simple', value: 0 },
-        {label: 'Detailed', value: 1 }
+        {label: 'Simple', value: true},
+        {label: 'Detailed', value: false}
       ],
       radio_props1: [
-        {label: 'Player 1 Serving', value: 0 },
-        {label: 'Player 2 Serving', value: 1 }
+        {label: 'Player 1 Serving', value: true},
+        {label: 'Player 2 Serving', value: false}
       ],
-      details: 0,
-      player1_serving: 0
+      simple: true,
+      p1_serving: true,
+      p1_name: 'Player 1',
+      p2_name: 'Player 2'
     }
   }
 
@@ -88,16 +29,20 @@ class Home extends React.Component {
     return (
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <View>
-            <Text style  = {{fontSize: 20, paddingBottom: '3%'}}>
-              Match Options
-            </Text>
-            <View
-              style={{
-                borderBottomColor: 'black',
-                borderBottomWidth: 0.7,
-              }}
-            />
+          <View style = {{flexDirection: 'row'}}>
+            <View style = {{alignSelf: 'flex-start'}}>
+            </View>
+            <View>
+              <Text style  = {{fontSize: 20, paddingBottom: '3%'}}>
+                Match Options
+              </Text>
+              <View
+                style={{
+                  borderBottomColor: 'black',
+                  borderBottomWidth: 0.7,
+                }}
+              />
+            </View>
           </View>
           <Text style = {{marginTop: '5%', paddingBottom: '5%', alignSelf: 'flex-start'}}>
             Select mode
@@ -106,12 +51,17 @@ class Home extends React.Component {
           <RadioForm
             radio_props={this.state.radio_props}
             initial={0}
-            onPress={(value) => {this.setState({details: value})}}
+            onPress={(value) => {this.setState({simple: value})}}
           />
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.navigate('Match', {/* TODO pass info here */});
+            this.props.navigation.navigate('Match', {
+              simple: this.state.simple,
+              p1_serving: this.state.p1_serving,
+              p1_name: this.state.p1_name,
+              p2_name: this.state.p2_name
+            });
             this.setState({modalVisible: !this.state.modalVisible})
           }}
           style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
@@ -155,6 +105,7 @@ class Home extends React.Component {
             </Text>
             <TextInput
               style={styles.input}
+              onChangeText = {(name) => this.setState({p1_name: name})}
             />
           </View>
           <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center'}}>
@@ -163,13 +114,14 @@ class Home extends React.Component {
             </Text>
             <TextInput
               style={styles.input}
+              onChangeText = {(name) => this.setState({p2_name: name})}
             />
           </View>
           <View style = {{alignSelf: 'flex-start'}}>
             <RadioForm
               radio_props={this.state.radio_props1}
               initial={0}
-              onPress={(value) => {this.setState({player1_serving: value})}}
+              onPress={(value) => {this.setState({p1_serving: value})}}
             />
           </View>
           <TouchableOpacity
@@ -205,10 +157,6 @@ class Home extends React.Component {
  
   
   render() {
-    var radio_props = [
-      {label: 'param1', value: 0 },
-      {label: 'param2', value: 1 }
-    ];
     return (
       <SafeAreaView style = {{flex: 1}}>
 
