@@ -56,13 +56,19 @@ class Home extends React.Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.props.navigation.navigate('Match', {
-              simple: this.state.simple,
-              p1_serving: this.state.p1_serving,
-              p1_name: this.state.p1_name,
-              p2_name: this.state.p2_name
-            });
             this.setState({modalVisible: !this.state.modalVisible})
+            if (this.state.simple) {
+              this.props.navigation.navigate('Match Simple', {
+                p1_serving: this.state.p1_serving,
+                p1_name: this.state.p1_name,
+                p2_name: this.state.p2_name
+            })}
+            else {
+              this.props.navigation.navigate('Match Detailed', {
+                p1_serving: this.state.p1_serving,
+                p1_name: this.state.p1_name,
+                p2_name: this.state.p2_name
+            })}
           }}
           style={[styles.button, {backgroundColor: '#0b79bd'}]}
         >

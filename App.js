@@ -8,7 +8,8 @@ import { AntDesign } from '@expo/vector-icons';
 
 import Home from './src/Home';
 import Details from './src/Details.js';
-import Match from './src/Match.js';
+import MatchSimple from './src/MatchSimple';
+import MatchDetailed from './src/MatchDetailed';
 
 const Stack = createStackNavigator();
 
@@ -34,7 +35,8 @@ function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Match History" component={Home} />
         <Stack.Screen name="Details" component={Details} />
-        <Stack.Screen name="Match" component={Match} />
+        <Stack.Screen name="Match Detailed" component={MatchDetailed} />
+        <Stack.Screen name="Match Simple" component={MatchSimple} />
       </Stack.Navigator>
     </NavigationContainer>
   );

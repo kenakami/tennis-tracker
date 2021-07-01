@@ -75,16 +75,6 @@ class Scoreboard extends React.Component {
           </View>
           <View style = {{flexDirection: 'row'}}>
             {
-              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"set"}>
-                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                  {this.props.data.match.p1}
-                </Text>
-                <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                  {this.props.data.match.p2}
-                </Text>
-              </View>
-            }
-            {
               this.props.data.match.set.map((set, index) => (
                 <View style = {{alignSelf: 'flex-end'}} key={"set"+index}>
                   <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>

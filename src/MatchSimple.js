@@ -2,38 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
 import Scoreboard from './components/Scoreboard';
 
-const data = {
-  match: {
-    set: [
-    {
-      game: [
-        {
-          point: [],
-          p1: 4,
-          p2: 0,
-        },
-      ],
-      p1: 6,
-      p2: 0,
-    },
-    {
-      game: [
-        {
-          point: [],
-          p1: 4,
-          p2: 0,
-        },
-      ],
-      p1: 6,
-      p2: 0,
-    }
-    ]
-  },
-  p1_name: "Ken",
-  p2_name: "Jun",
-  done: false,
-}
-
 const score = {
   0: 0,
   1: 15,
@@ -46,7 +14,7 @@ Array.prototype.last = function(){
   return this[this.length - 1];
 };
 
-class Match extends React.Component {
+class MatchSimple extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -73,7 +41,6 @@ class Match extends React.Component {
 
   componentDidMount() {
     this.setState({
-      simple: this.props.route?.params?.simple,
       p1_serving: this.props.route?.params?.p1_serving,
       p1_name: this.props.route?.params?.p1_name,
       p2_name: this.props.route?.params?.p2_name,
@@ -157,4 +124,4 @@ class Match extends React.Component {
     );
   }
 }
-export default Match;
+export default MatchSimple;
