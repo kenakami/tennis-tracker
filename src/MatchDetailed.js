@@ -119,8 +119,24 @@ class MatchDetailed extends React.Component {
             </Text>
         </View>
         <View style = {{flex: 1}}>
-            <View style = {{height: '88%', backgroundColor: 'black'}}>
+            <View style = {{height: '88%', backgroundColor: 'black', flexDirection: 'row'}}>
+                <View style = {{width: '50%', height: '100%', backgroundColor: 'purple'}}>
+                    <View style = {{backgroundColor: 'white', flexGrow: 1}}>
+                    </View>
+                    <View style = {{backgroundColor: 'black', flexGrow: 1}}>
+                    </View>
+                    <View style = {{backgroundColor: 'red', flexGrow: 1}}>
+                    </View>
+                </View>
+                <View style = {{backgroundColor: 'yellow', width: '50%', height: '100%'}}>
+                  <View style = {{flexGrow: 1, backgroundColor: 'blue'}}>
 
+                  </View>
+                  <View style = {{flexGrow: 1}}>
+
+                  </View>
+
+                </View>
             </View>
             <TouchableOpacity style = {{justifyContent: 'center', alignItems: 'center', flex: 1}}>
                 <Text style = {{fontSize: 18}}>
@@ -133,4 +149,10 @@ class MatchDetailed extends React.Component {
     );
   }
 }
+const styles = StyleSheet.create({
+    thirds: {
+        width: '100%',
+        height: 100/3
+    }
+  });
 export default MatchDetailed;
