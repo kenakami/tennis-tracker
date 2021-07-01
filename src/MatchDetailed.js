@@ -103,72 +103,76 @@ class MatchDetailed extends React.Component {
     return [p1, p2];
   }
 
-  render() {
+  renderStep1() {
     return(
-      <SafeAreaView style={{flex: 1}}>
-        <Scoreboard data={this.state} />
-        <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: '3%'}}>
-            <Text style = {{fontSize: 18}}>
-                {this.state.p1_name}
-            </Text>
-            <Text style = {{color: '#00bfff', fontSize: 18}}>
-                1st Service
-            </Text>
-            <Text style = {{fontSize: 18}}>
-                {this.state.p2_name}
-            </Text>
-        </View>
-        <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
-            <View style = {{height: '88%', flexDirection: 'row'}}>
-                <View style = {{width: '50%', height: '100%'}}>
-                  <TouchableOpacity style = {styles.button}>
-                    <Text style = {{fontSize: 19, color: 'green'}}>
-                        Ball in 
-                      </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style = {styles.button}>
-                    <Text style = {{fontSize: 19, color: 'red'}}>
-                      Fault
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style = {styles.button}>
-                    <Text style = {{fontSize: 19, color: 'green'}}>
-                      Ace
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View style = {{width: '50%', height: '100%'}}>
-                  <TouchableOpacity style = {styles.button}>
-                    <Text style = {{fontSize: 19, color: 'green'}}>
-                      Return Winner
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style = {styles.button}>
-                    <Text style = {{fontSize: 19, color: 'red'}}>
-                      Return Error
-                    </Text>
-                  </TouchableOpacity>
-
-                </View>
-            </View>
-            <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19}}>
-                    Undo
+      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
+        <View style = {{height: '88%', flexDirection: 'row'}}>
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                    Ball in 
+                  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Fault
                 </Text>
-            </TouchableOpacity>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Ace
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Return Winner
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Return Error
+                </Text>
+              </TouchableOpacity>
 
+            </View>
         </View>
-      </SafeAreaView>
+        <TouchableOpacity style = {styles.button}>
+            <Text style = {{fontSize: 19}}>
+                Undo
+            </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  render() {
+    return (
+    <SafeAreaView style={{flex: 1}}>
+      <Scoreboard data={this.state} />
+        <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: '3%'}}>
+          <Text style = {{fontSize: 18}}>
+              {this.state.p1_name}
+          </Text>
+          <Text style = {{color: '#00bfff', fontSize: 18}}>
+              1st Service
+          </Text>
+          <Text style = {{fontSize: 18}}>
+              {this.state.p2_name}
+          </Text>
+      </View>
+      {this.renderStep1()}
+    </SafeAreaView>
     );
   }
 }
+
 const styles = StyleSheet.create({
     button: {
       justifyContent: 'center', 
       alignItems: 'center', 
       flex: 1, 
       flexGrow: 1, 
-      borderRadius: 6, 
       borderColor: 'black', 
       borderWidth: 1,
       backgroundColor: 'white',

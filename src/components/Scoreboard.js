@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, SafeAreaView, ScrollView , TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, ActivityIndicator } from 'react-native';
 
 Array.prototype.last = function(){
     return this[this.length - 1];
@@ -51,6 +51,55 @@ class Scoreboard extends React.Component {
         </View>
       )
     }
+    return (
+      <TouchableOpacity
+        style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
+      >
+        <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
+          <View>
+            <Text style = {{fontSize: 17, fontWeight: '500', flex: 1, backgroundColor: 'blue'}}>
+              {this.props.data.p1_serving ? '*' : null}
+            </Text>
+            <Text style = {{fontSize: 17, fontWeight: '500', flex: 1, backgroundColor: 'red'}}>
+              {this.props.data.p1_serving ? null : '*'}
+            </Text>
+          </View>
+          <View>
+            <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
+              {this.props.data.p1_name}
+            </Text>
+            <Text style = {{fontSize: 17, fontWeight: '500'}}>
+              {this.props.data.p2_name}
+            </Text>
+          </View>
+          <View style = {{flexDirection: 'row'}}>
+            {
+              this.props.data.match.set.map((set, index) => (
+                <View style = {{alignSelf: 'flex-end'}} key={"set"+index}>
+                  <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
+                    {set.p1}
+                  </Text>
+                  <Text style = {{fontSize: 17, fontWeight: '300'}}>
+                    {set.p2}
+                  </Text>
+                </View>
+              ))
+            }
+            {
+              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"point"}>
+                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
+                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
+                </Text>
+                <Text style = {{fontSize: 17, fontWeight: '300'}}>
+                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
+                </Text>
+              </View>
+            }
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+    /*
     return(
       <TouchableOpacity
         style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
@@ -100,7 +149,13 @@ class Scoreboard extends React.Component {
         </View>
       </TouchableOpacity>
     );
+    */
   }
 }
+
+const styles = StyleSheet.create({
+  grid: {
+  }
+});
 
 export default Scoreboard;
