@@ -72,13 +72,12 @@ class Match extends React.Component {
   }
 
   componentDidMount() {
-    /*
     this.setState({
-      p1_name: this.props.data?.p1_name,
-      p2_name: this.props.data?.p2_name,
-      best_of: this.props.data?.best_of,
+      simple: this.props.route?.params?.simple,
+      p1_serving: this.props.route?.params?.p1_serving,
+      p1_name: this.props.route?.params?.p1_name,
+      p2_name: this.props.route?.params?.p2_name,
     });
-    */
   }
 
   /**
@@ -117,6 +116,7 @@ class Match extends React.Component {
           p2: 0,
         });
       }
+      this.setState({p1_serving: !this.state.p1_serving});
       match.set.last().game.push({
         point: [],
         p1: 0,

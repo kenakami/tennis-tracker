@@ -59,6 +59,14 @@ class Scoreboard extends React.Component {
         <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
           <View>
             <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
+              {this.props.data.p1_serving ? '*' : null}
+            </Text>
+            <Text style = {{fontSize: 17, fontWeight: '500'}}>
+              {this.props.data.p1_serving ? null : '*'}
+            </Text>
+          </View>
+          <View>
+            <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
               {this.props.data.p1_name}
             </Text>
             <Text style = {{fontSize: 17, fontWeight: '500'}}>

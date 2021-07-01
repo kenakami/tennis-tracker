@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput, KeyboardAvoidingView} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
@@ -64,7 +64,7 @@ class Home extends React.Component {
             });
             this.setState({modalVisible: !this.state.modalVisible})
           }}
-          style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
+          style={[styles.button, {backgroundColor: '#0b79bd'}]}
         >
           <Text style = {{color: '#ffffff'}}>
             Create Match
@@ -72,7 +72,7 @@ class Home extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           onPress = {() => this.setState({modalVisible: !this.state.modalVisible})}
-          style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#f0e9e9', padding: '2%', alignItems: 'center', justifyContent: 'center'}}
+          style={[styles.button, {backgroundColor: '#f0e9e9'}]}
         >
           <Text>
             Cancel
@@ -129,14 +129,16 @@ class Home extends React.Component {
               this.setState({firstModalVisible: !this.state.firstModalVisible})
               this.setState({modalVisible: !this.state.modalVisible})
             }}
-            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#0b79bd', padding: '2%', alignItems: 'center', justifyContent: 'center'}}>
+            style={[styles.button, {backgroundColor: '#0b79bd'}]}
+          >
             <Text style = {{color: '#ffffff'}}>
               Continue
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}
-            style = {{width: '100%', height: '15%', borderRadius: 20, alignSelf: 'center', marginTop: '3%', backgroundColor: '#f0e9e9', padding: '2%', alignItems: 'center', justifyContent: 'center'}}>
+            style={[styles.button, {backgroundColor: '#f0e9e9'}]}
+          >
             <Text>
               Cancel
             </Text>
@@ -159,7 +161,6 @@ class Home extends React.Component {
   render() {
     return (
       <SafeAreaView style = {{flex: 1}}>
-
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
           <TouchableOpacity
             style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
@@ -237,7 +238,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '80%',
-    height: '40%'
   },
   firstModalView: {
     margin: 20,
@@ -254,14 +254,24 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '80%',
-    height: '48%'
   },
   input: {
     height: '120%',
-    width: '50%',
+    width: '70%',
     borderRadius: 5,
     borderColor: 'gray',
     borderWidth: 2
-  }
+  },
+  button: {
+    width: '100%',
+    height: 48, 
+    borderRadius: 20,
+    alignSelf: 'center',
+    marginTop: '3%',
+    backgroundColor: '#f0e9e9',
+    padding: '2%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 export default Home;
