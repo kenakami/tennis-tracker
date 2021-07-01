@@ -118,28 +118,41 @@ class MatchDetailed extends React.Component {
                 {this.state.p2_name}
             </Text>
         </View>
-        <View style = {{flex: 1}}>
-            <View style = {{height: '88%', backgroundColor: 'black', flexDirection: 'row'}}>
-                <View style = {{width: '50%', height: '100%', backgroundColor: 'purple'}}>
-                    <View style = {{backgroundColor: 'white', flexGrow: 1}}>
-                    </View>
-                    <View style = {{backgroundColor: 'black', flexGrow: 1}}>
-                    </View>
-                    <View style = {{backgroundColor: 'red', flexGrow: 1}}>
-                    </View>
+        <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
+            <View style = {{height: '88%', flexDirection: 'row'}}>
+                <View style = {{width: '50%', height: '100%'}}>
+                  <TouchableOpacity style = {styles.button}>
+                    <Text style = {{fontSize: 19, color: 'green'}}>
+                        Ball in 
+                      </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style = {styles.button}>
+                    <Text style = {{fontSize: 19, color: 'red'}}>
+                      Fault
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style = {styles.button}>
+                    <Text style = {{fontSize: 19, color: 'green'}}>
+                      Ace
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <View style = {{backgroundColor: 'yellow', width: '50%', height: '100%'}}>
-                  <View style = {{flexGrow: 1, backgroundColor: 'blue'}}>
-
-                  </View>
-                  <View style = {{flexGrow: 1}}>
-
-                  </View>
+                <View style = {{width: '50%', height: '100%'}}>
+                  <TouchableOpacity style = {styles.button}>
+                    <Text style = {{fontSize: 19, color: 'green'}}>
+                      Return Winner
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style = {styles.button}>
+                    <Text style = {{fontSize: 19, color: 'red'}}>
+                      Return Error
+                    </Text>
+                  </TouchableOpacity>
 
                 </View>
             </View>
-            <TouchableOpacity style = {{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-                <Text style = {{fontSize: 18}}>
+            <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19}}>
                     Undo
                 </Text>
             </TouchableOpacity>
@@ -150,9 +163,16 @@ class MatchDetailed extends React.Component {
   }
 }
 const styles = StyleSheet.create({
-    thirds: {
-        width: '100%',
-        height: 100/3
+    button: {
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      flex: 1, 
+      flexGrow: 1, 
+      borderRadius: 6, 
+      borderColor: 'black', 
+      borderWidth: 1,
+      backgroundColor: 'white',
+      padding: '0.5%'
     }
   });
 export default MatchDetailed;
