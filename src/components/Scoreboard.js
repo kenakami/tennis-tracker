@@ -45,7 +45,7 @@ class Scoreboard extends React.Component {
     if (false) {
       return (
         <View
-          style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', justifyContent: 'center' }}
+          style = {{flexDirection: 'row', width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
         >
           <ActivityIndicator size="large" color="black" />
         </View>
@@ -53,108 +53,56 @@ class Scoreboard extends React.Component {
     }
     return (
       <TouchableOpacity
-        style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
+        style = {{flexDirection: 'row', width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
       >
-        <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
-          <View>
-            <Text style = {{fontSize: 17, fontWeight: '500', flex: 1, backgroundColor: 'blue'}}>
-              {this.props.data.p1_serving ? '*' : null}
-            </Text>
-            <Text style = {{fontSize: 17, fontWeight: '500', flex: 1, backgroundColor: 'red'}}>
-              {this.props.data.p1_serving ? null : '*'}
-            </Text>
-          </View>
-          <View>
-            <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
-              {this.props.data.p1_name}
-            </Text>
-            <Text style = {{fontSize: 17, fontWeight: '500'}}>
-              {this.props.data.p2_name}
-            </Text>
-          </View>
-          <View style = {{flexDirection: 'row'}}>
-            {
-              this.props.data.match.set.map((set, index) => (
-                <View style = {{alignSelf: 'flex-end'}} key={"set"+index}>
-                  <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                    {set.p1}
-                  </Text>
-                  <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                    {set.p2}
-                  </Text>
-                </View>
-              ))
-            }
-            {
-              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"point"}>
-                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
-                </Text>
-                <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
-                </Text>
-              </View>
-            }
-          </View>
+        <View style={{flex: 1, alignItems: 'center'}}>
+          <Text style={styles.unit}>
+            {this.props.data.p1_serving ? '*' : null}
+          </Text>
+          <Text style={styles.unit}>
+            {this.props.data.p1_serving ? null : '*'}
+          </Text>
         </View>
+        <View style={{flex: 10}}>
+          <Text style={styles.unit}>
+            {this.props.data.p1_name}
+          </Text>
+          <Text style={styles.unit}>
+            {this.props.data.p2_name}
+          </Text>
+        </View>
+        {
+          this.props.data.match.set.map((set, index) => (
+            <View style={{flex: 1, alignItems: 'center'}} key={"set"+index}>
+              <Text style={styles.unit}>
+                {set.p1}
+              </Text>
+              <Text style={styles.unit}>
+                {set.p2}
+              </Text>
+            </View>
+          ))
+        }
+        {
+          <View style={{flex: 1, alignItems: 'center', backgroundColor: 'gray'}} key={"point"}>
+            <Text style={styles.unit}>
+              {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
+            </Text>
+            <Text style={styles.unit}>
+              {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
+            </Text>
+          </View>
+        }
       </TouchableOpacity>
     );
-    /*
-    return(
-      <TouchableOpacity
-        style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
-        //onPress={() => this.props.navigation.navigate('Details')}
-      >
-        <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
-          <View>
-            <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
-              {this.props.data.p1_serving ? '*' : null}
-            </Text>
-            <Text style = {{fontSize: 17, fontWeight: '500'}}>
-              {this.props.data.p1_serving ? null : '*'}
-            </Text>
-          </View>
-          <View>
-            <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
-              {this.props.data.p1_name}
-            </Text>
-            <Text style = {{fontSize: 17, fontWeight: '500'}}>
-              {this.props.data.p2_name}
-            </Text>
-          </View>
-          <View style = {{flexDirection: 'row'}}>
-            {
-              this.props.data.match.set.map((set, index) => (
-                <View style = {{alignSelf: 'flex-end'}} key={"set"+index}>
-                  <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                    {set.p1}
-                  </Text>
-                  <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                    {set.p2}
-                  </Text>
-                </View>
-              ))
-            }
-            {
-              <View style = {{alignSelf: 'flex-end', backgroundColor: 'gray'}} key={"point"}>
-                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
-                </Text>
-                <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                  {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
-                </Text>
-              </View>
-            }
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-    */
   }
 }
 
 const styles = StyleSheet.create({
-  grid: {
+  unit: {
+    fontSize: 18,
+    fontWeight: '500',
+    flex: 1,
   }
 });
 

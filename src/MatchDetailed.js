@@ -107,36 +107,35 @@ class MatchDetailed extends React.Component {
     return(
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                    Ball in 
-                  </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Fault
+          <View style = {{width: '50%', height: '100%'}}>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'green'}}>
+                  Ball in 
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Ace
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Return Winner
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Return Error
-                </Text>
-              </TouchableOpacity>
-
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'red'}}>
+                Fault
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'green'}}>
+                Ace
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style = {{width: '50%', height: '100%'}}>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'green'}}>
+                Return Winner
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'red'}}>
+                Return Error
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <TouchableOpacity style = {styles.button}>
             <Text style = {{fontSize: 19}}>
@@ -146,6 +145,7 @@ class MatchDetailed extends React.Component {
       </View>
     );
   }
+
   render() {
     return (
     <SafeAreaView style={{flex: 1}}>
@@ -168,15 +168,15 @@ class MatchDetailed extends React.Component {
 }
 
 const styles = StyleSheet.create({
-    button: {
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      flex: 1, 
-      flexGrow: 1, 
-      borderColor: 'black', 
-      borderWidth: 1,
-      backgroundColor: 'white',
-      padding: '0.5%'
-    }
-  });
+  button: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    flex: 1, 
+    borderColor: 'black', 
+    borderWidth: 1,
+    backgroundColor: 'white',
+    padding: '0.5%'
+  }
+});
+
 export default MatchDetailed;

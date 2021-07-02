@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Mo
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Home extends React.Component {
   constructor(props) {
