@@ -45,7 +45,7 @@ class Home extends React.Component {
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.navigation.setOptions({headerRight: () => (
       <TouchableOpacity onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}>
           <AntDesign name="plus" size={21} color= "black"/>
@@ -54,7 +54,12 @@ class Home extends React.Component {
     headerRightContainerStyle: {marginRight:'4%'}})
   }
 
-
+  reset() {
+    this.setState({
+      simple: true, 
+      p1_serving: true,
+    })
+  }
 
   renderModal() {
     return (
@@ -93,14 +98,16 @@ class Home extends React.Component {
                 p1_serving: this.state.p1_serving,
                 p1_name: this.state.p1_name,
                 p2_name: this.state.p2_name
-            })}
-            else {
-              this.setState({simple: true});
+              })
+              this.reset()
+            } else {
               this.props.navigation.navigate('Match Detailed', {
                 p1_serving: this.state.p1_serving,
                 p1_name: this.state.p1_name,
                 p2_name: this.state.p2_name
-            })}
+              });
+              this.reset()
+            }
           }}
           style={[styles.button, {backgroundColor: '#0b79bd'}]}
         >

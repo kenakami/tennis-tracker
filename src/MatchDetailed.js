@@ -36,6 +36,7 @@ class MatchDetailed extends React.Component {
       p1_name: "Foo",
       p2_name: "Bar",
       best_of: 1,
+      data: 'First Service'
     }
   }
 
@@ -103,27 +104,54 @@ class MatchDetailed extends React.Component {
     return [p1, p2];
   }
 
-  renderStep1() {
+  renderServer1() {
     return(
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
-          <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button}>
-              <Text style = {{fontSize: 19, color: 'green'}}>
-                  Ball in 
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {this.setState({data: "Ball in play"})}}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                    Ball in 
+                  </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Fault
                 </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style = {styles.button}>
-              <Text style = {{fontSize: 19, color: 'red'}}>
-                Fault
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style = {styles.button}>
-              <Text style = {{fontSize: 19, color: 'green'}}>
-                Ace
-              </Text>
-            </TouchableOpacity>
-          </View>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Ace
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Return Winner
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Return Error
+                </Text>
+              </TouchableOpacity>
+
+            </View>
+        </View>
+        <TouchableOpacity style = {styles.button}>
+            <Text style = {{fontSize: 19}}>
+                Undo
+            </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  renderServer2() {
+    return(
+      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
+        <View style = {{height: '88%', flexDirection: 'row'}}>
           <View style = {{width: '50%', height: '100%'}}>
             <TouchableOpacity style = {styles.button}>
               <Text style = {{fontSize: 19, color: 'green'}}>
@@ -136,15 +164,84 @@ class MatchDetailed extends React.Component {
               </Text>
             </TouchableOpacity>
           </View>
+          <View style = {{width: '50%', height: '100%'}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {this.setState({data: "Ball in play"})}}>
+              <Text style = {{fontSize: 19, color: 'green'}}>
+                Ball in 
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'red'}}>
+                Fault
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19, color: 'green'}}>
+                Ace
+              </Text>
+            </TouchableOpacity>
+          </View>
+          </View>
+          <TouchableOpacity style = {styles.button}>
+              <Text style = {{fontSize: 19}}>
+                  Undo
+              </Text>
+          </TouchableOpacity>
+        </View>
+    );
+  }
+
+  renderBallIn() {
+    return(
+      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
+        <View style = {{height: '88%', flexDirection: 'row'}}>
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Winner
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Forced Error
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Unforced error
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style = {{width: '50%', height: '100%'}}>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'green'}}>
+                  Winner
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Forced Error
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style = {styles.button}>
+                <Text style = {{fontSize: 19, color: 'red'}}>
+                  Unforced error
+                </Text>
+              </TouchableOpacity>
+            </View>
         </View>
         <TouchableOpacity style = {styles.button}>
-            <Text style = {{fontSize: 19}}>
-                Undo
-            </Text>
+          <Text style = {{fontSize: 19}}>
+              Undo
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
+
+
+  
+
 
   render() {
     return (
@@ -161,22 +258,23 @@ class MatchDetailed extends React.Component {
               {this.state.p2_name}
           </Text>
       </View>
-      {this.renderStep1()}
+      {this.state.p1_serving & this.state.data != "Ball in play" ? this.renderServer1() : null}
+      {!this.state.p1_serving & this.state.data != "Ball in play" ? this.renderServer2() : null}
+      {this.state.data == "Ball in play" ? this.renderBallIn() : null}
     </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  button: {
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    flex: 1, 
-    borderColor: 'black', 
-    borderWidth: 1,
-    backgroundColor: 'white',
-    padding: '0.5%'
-  }
-});
-
+    button: {
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      flex: 1,
+      borderColor: 'black', 
+      borderWidth: 1,
+      backgroundColor: 'white',
+      padding: '0.5%'
+    }
+  });
 export default MatchDetailed;
