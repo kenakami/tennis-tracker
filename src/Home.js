@@ -4,6 +4,10 @@ import { AntDesign } from '@expo/vector-icons';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import util from './util.js';
+import Scoreboard from './components/Scoreboard';
+
+const debug = 1;
 
 const storeData = async (key, value) => {
   try {
@@ -11,8 +15,10 @@ const storeData = async (key, value) => {
     await AsyncStorage.setItem(key, jsonValue)
   } catch (e) {
     // saving error
+    console.log(e);
   }
 }
+
 
 const getData = async (key) => {
   try {
@@ -20,8 +26,10 @@ const getData = async (key) => {
     return jsonValue != null ? JSON.parse(jsonValue) : null;
   } catch(e) {
     // error reading value
+    console.log(e);
   }
 }
+
 
 class Home extends React.Component {
   constructor(props) {
@@ -41,7 +49,8 @@ class Home extends React.Component {
       simple: true,
       p1_serving: true,
       p1_name: 'Player 1',
-      p2_name: 'Player 2'
+      p2_name: 'Player 2',
+      test: "init",
     }
   }
 
@@ -52,6 +61,7 @@ class Home extends React.Component {
       </TouchableOpacity>
     ),
     headerRightContainerStyle: {marginRight:'4%'}})
+    this.getMatches();
   }
 
   reset() {
@@ -59,6 +69,46 @@ class Home extends React.Component {
       simple: true, 
       p1_serving: true,
     })
+  }
+
+  async setMatch(index, data) {
+    let temp = this.state.matches;
+    temp[index] = data;
+    await storeData('matches', temp);
+    await this.setState({matches: temp});
+  }
+
+  async getMatches() {
+    let temp = await getData('matches')
+    temp = temp ? temp : [];
+    this.setState({matches: temp});
+  }
+
+  async addMatch() {
+    let temp = this.state.matches;
+    temp.push({
+      match: {
+        set: [{
+          game: [
+            {
+              point: [],
+              p1: 0,
+              p2: 0,
+            },
+          ],
+          p1: 0,
+          p2: 0,
+        }],
+        p1: 0,
+        p2: 0,
+      },
+      p1_serving: this.state.p1_serving,
+      p1_name: this.state.p1_name,
+      p2_name: this.state.p2_name,
+    });
+    console.log(temp);
+    await this.setState({matches: temp});
+    await storeData('matches', temp);
   }
 
   renderModal() {
@@ -92,22 +142,25 @@ class Home extends React.Component {
         </View>
         <TouchableOpacity
           onPress={() => {
+            this.addMatch();
             this.setState({modalVisible: !this.state.modalVisible})
             if (this.state.simple) {
               this.props.navigation.navigate('Match Simple', {
                 p1_serving: this.state.p1_serving,
                 p1_name: this.state.p1_name,
-                p2_name: this.state.p2_name
+                p2_name: this.state.p2_name,
+                update: this.setMatch,
+                index: this.state.matches.length,
               })
-              this.reset()
             } else {
               this.props.navigation.navigate('Match Detailed', {
                 p1_serving: this.state.p1_serving,
                 p1_name: this.state.p1_name,
-                p2_name: this.state.p2_name
+                p2_name: this.state.p2_name,
+                index: this.state.matches.length,
               });
-              this.reset()
             }
+            this.reset()
           }}
           style={[styles.button, {backgroundColor: '#0b79bd'}]}
         >
@@ -197,6 +250,12 @@ class Home extends React.Component {
     return (
       <SafeAreaView style = {{flex: 1}}>
         <ScrollView contentContainerStyle={{flexGrow: 1}}>
+          {
+            this.state.matches.map((match, index) => (
+              <Scoreboard data={match} key={"match"+index}/>
+            ))
+          }
+          {/*
           <TouchableOpacity
             style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
             onPress={() => this.props.navigation.navigate('Details')}
@@ -230,6 +289,7 @@ class Home extends React.Component {
               </View>
             </View>
           </TouchableOpacity>
+          */}
           <Modal
             animationType="slide"
             transparent={true}
@@ -244,9 +304,28 @@ class Home extends React.Component {
             >
               {this.renderModal()}
           </Modal>
+          {debug ? this.renderDebug() : null}
         </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
     );
+  }
+
+  renderDebug() {
+    return (
+      <View style={{flex: 1, padding: '5%'}}>
+        <Button
+          title="print state"
+          onPress={() => console.log(this.state)}
+        />
+        <Button
+          title="clear storage"
+          onPress={() => {
+            AsyncStorage.removeItem('matches')
+            this.setState({matches: []});
+          }}
+        />
+      </View>
+    )
   }
 }
 

@@ -33,6 +33,7 @@ class MatchSimple extends React.Component {
         p1: 0,
         p2: 0,
       },
+      p1_serving: true,
       p1_name: "Foo",
       p2_name: "Bar",
       best_of: 1,
@@ -48,7 +49,7 @@ class MatchSimple extends React.Component {
   }
 
   /**
-   * Awwards point and returns an array of formatted game score (eg. 40-15)
+   * Awwards point
    * @param p   Player to award point (true = p1, false = p2)
    */
   point(p) {
@@ -108,14 +109,26 @@ class MatchSimple extends React.Component {
       <View style={{flex: 1}}>
         <Scoreboard data={this.state} />
         <View style={{flexDirection: "row", justifyContent: "center"}}>
-          <TouchableOpacity style={{padding: '2%'}} onPress={() => this.point(true)}>
+          <TouchableOpacity
+            style={{padding: '2%'}}
+            onPress={() => {
+              this.point(true);
+              this.props.route.params.update(this.props.route.params.index, this.state);
+            }}
+          >
             <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p1]}</Text>
             <Text style={{fontSize: 32}}>{this.state.p1_name}</Text>
           </TouchableOpacity>
           <View style={{padding: '2%'}}>
             <Text style={{fontSize: 64}}>-</Text>
           </View>
-          <TouchableOpacity style={{padding: '2%'}} onPress={() => this.point(false)}>
+          <TouchableOpacity
+            style={{padding: '2%'}}
+            onPress={() => {
+              this.point(false);
+              this.props.route.params.update(this.props.route.params.index, this.state);
+            }}
+          >
             <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p2]}</Text>
             <Text style={{fontSize: 32}}>{this.state.p2_name}</Text>
           </TouchableOpacity>
