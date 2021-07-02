@@ -5,10 +5,29 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import { Ionicons } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const storeData = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value)
+    await AsyncStorage.setItem(key, jsonValue)
+  } catch (e) {
+    // saving error
+  }
+}
+
+const getData = async (key) => {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key)
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch(e) {
+    // error reading value
+  }
+}
+
 class Home extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      matches: [],
       modalVisible: false,
       firstModalVisible: false,
       radio_props: [
@@ -25,6 +44,17 @@ class Home extends React.Component {
       p2_name: 'Player 2'
     }
   }
+
+  componentDidMount(){
+    this.props.navigation.setOptions({headerRight: () => (
+      <TouchableOpacity onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}>
+          <AntDesign name="plus" size={21} color= "black"/>
+      </TouchableOpacity>
+    ),
+    headerRightContainerStyle: {marginRight:'4%'}})
+  }
+
+
 
   renderModal() {
     return (
@@ -65,6 +95,7 @@ class Home extends React.Component {
                 p2_name: this.state.p2_name
             })}
             else {
+              this.setState({simple: true});
               this.props.navigation.navigate('Match Detailed', {
                 p1_serving: this.state.p1_serving,
                 p1_name: this.state.p1_name,
@@ -154,16 +185,6 @@ class Home extends React.Component {
       </View>
     )
   }
-
-  componentDidMount(){
-    this.props.navigation.setOptions({headerRight: () => (
-      <TouchableOpacity onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}>
-          <AntDesign name="plus" size={21} color= "black"/>
-      </TouchableOpacity>
-    ),
-    headerRightContainerStyle: {marginRight:'4%'}})
-  }
- 
   
   render() {
     return (
@@ -221,7 +242,6 @@ class Home extends React.Component {
     );
   }
 }
-
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -281,4 +301,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
 export default Home;
