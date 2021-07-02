@@ -111,6 +111,7 @@ class MatchDetailed extends React.Component {
   handleFault() {
     if (this.state.data == "Second Service") {
       this.setState({data: 'First Service'})
+      this.point(!this.state.p1_serving)
     } else {
       this.setState({data: 'Second Service'})
     }
@@ -131,19 +132,28 @@ class MatchDetailed extends React.Component {
                   Fault
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(this.state.p1_serving)
+                }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Ace
                 </Text>
               </TouchableOpacity>
             </View>
             <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(!this.state.p1_serving)
+                }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Return Winner
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(this.state.p1_serving)
+                }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Return Error
                 </Text>
@@ -165,12 +175,18 @@ class MatchDetailed extends React.Component {
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
           <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {
+              this.backToFirstService()
+              this.point(!this.state.p1_serving)
+              }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Return Winner
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {
+              this.backToFirstService()
+              this.point(this.state.p1_serving)
+              }}>
               <Text style = {{fontSize: 19, color: 'red'}}>
                 Return Error
               </Text>
@@ -187,7 +203,10 @@ class MatchDetailed extends React.Component {
                 Fault
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {
+              this.backToFirstService()
+              this.point(this.state.p1_serving)
+              }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Ace
               </Text>
@@ -208,34 +227,52 @@ class MatchDetailed extends React.Component {
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
             <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(true)
+                }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(false)
+                }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(false)
+                }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
                 </Text>
               </TouchableOpacity>
             </View>
             <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(false)
+                }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(true)
+                }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.backToFirstService()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {
+                this.backToFirstService()
+                this.point(true)
+                }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
                 </Text>
@@ -251,10 +288,6 @@ class MatchDetailed extends React.Component {
     );
   }
 
-
-  
-
-
   render() {
     return (
     <SafeAreaView style={{flex: 1}}>
@@ -269,7 +302,7 @@ class MatchDetailed extends React.Component {
           <Text style = {{fontSize: 18}}>
               {this.state.p2_name}
           </Text>
-      </View>
+      </View> 
       {this.state.p1_serving & this.state.data != "Ball in Play" ? this.renderServer1() : null}
       {!this.state.p1_serving & this.state.data != "Ball in Play" ? this.renderServer2() : null}
       {this.state.data == "Ball in Play" ? this.renderBallIn() : null}
