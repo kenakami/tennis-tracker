@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Pressable} from 'react-native';
 import Scoreboard from './components/Scoreboard';
 
 const score = {
@@ -36,7 +36,30 @@ class MatchDetailed extends React.Component {
       p1_name: "Foo",
       p2_name: "Bar",
       best_of: 1,
-      data: 'First Service'
+      data: 'First Service',
+      stats: {
+        p1: {
+          aces: 0,
+          first_serve: 0,
+          double_faults: 0,
+          winners: 0,
+          unforced_errors: 0,
+          forced_errors: 0,
+          total_first_serves: 0,
+          points_won: 0,
+        },
+        p2: {
+          aces: 0,
+          first_serve: 0,
+          double_faults: 0,
+          winners: 0,
+          unforced_errors: 0,
+          forced_errors: 0,
+          total_first_serves: 0,
+          points_won: 0,
+        },
+      },
+      total_points: 0
     }
   }
 
@@ -109,12 +132,113 @@ class MatchDetailed extends React.Component {
   }
 
   handleFault() {
+    let temp = this.state.stats
     if (this.state.data == "Second Service") {
       this.setState({data: 'First Service'})
       this.point(!this.state.p1_serving)
+      if (this.state.p1_serving) {
+        temp.p1.double_faults++
+        temp.p2.points_won++
+        temp.p1.unforced_errors++
+      } else {
+        temp.p2.doublefaults++
+        temp.p1.points_won++
+        temp.p2.unforced_errors++
+      }
     } else {
       this.setState({data: 'Second Service'})
+      if (this.state.p1_serving) {
+        temp.p1.total_first_serves++
+      } else {
+        temp.p2.total_first_serves++
+      }
     }
+    this.setState({stats: temp})
+  }
+
+  handleBallIn() {
+    this.setState({data: "Ball in Play"})
+    let temp = this.state.stats
+    if (this.state.p1_serving & this.state.data == "First Service") {
+      temp.p1.total_first_serves++
+      temp.p1.first_serve++
+    } else if (this.state.p2_serving & this.state.data == "First Service") {
+      temp.p2.total_first_serves++
+      temp.p2.first_serve++
+    }
+    this.setState({stats: temp})
+  }
+
+  handleAce() {
+    this.backToFirstService()
+    this.point(this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
+      temp.p1.aces++
+      temp.p1.winners++
+      temp.p1.points_won++
+      if (this.state.data == "First Service") {
+        temp.p1.first_serve++
+        temp.p1.total_first_serves++
+      }
+    } else {
+      temp.p2.aces++
+      temp.p2.winners++
+      temp.p2.points_won++
+      if (this.state.data == "First Service") {
+        temp.p2.first_serve++
+        temp.p2.total_first_serves++
+      }
+    }
+    this.setState({stats: temp})
+  }
+
+  handleReturnWinner() {
+    this.backToFirstService()
+    this.point(!this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
+      temp.p2.winners++
+      temp.p2.points_won++
+      if (this.state.data == "First Service") {
+        temp.p1.first_serve++
+        temp.p1.total_first_serves++
+      }
+    } else {
+      temp.p1.winners++
+      temp.p1.points_won++
+      if (this.state.data == "First Service") {
+        temp.p2.first_serve++
+        temp.p2.total_first_serves++
+      }
+    }
+    this.setState({stats: temp})
+  }
+
+  handleReturnError() {
+    this.backToFirstService()
+    this.point(this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
+      if (this.state.data == "First Service") {
+        temp.p2.forced_errors++
+        temp.p1.total_first_serves++
+        temp.p1.first_serve++
+      } else {
+        temp.p2.unforced_errors++
+      }
+      temp.p1.points_won++
+    } else {
+      if (this.state.data == "First Service") {
+        temp.p1.forced_errors++
+        temp.p2.total_first_serves++
+        temp.p2.first_serve++
+      } else {
+        temp.p1.unforced_errors++
+      }
+      temp.p2.points_won++
+    }
+    this.setState({stats: temp})
   }
 
   renderServer1() {
@@ -122,7 +246,7 @@ class MatchDetailed extends React.Component {
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
             <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {this.setState({data: "Ball in Play"})}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {this.handleBallIn()}}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                     Ball in 
                   </Text>
@@ -133,8 +257,7 @@ class MatchDetailed extends React.Component {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(this.state.p1_serving)
+                this.handleAce()
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Ace
@@ -143,16 +266,14 @@ class MatchDetailed extends React.Component {
             </View>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(!this.state.p1_serving)
+                this.handleReturnWinner()
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Return Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(this.state.p1_serving)
+                this.handleReturnError()
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Return Error
@@ -176,16 +297,14 @@ class MatchDetailed extends React.Component {
         <View style = {{height: '88%', flexDirection: 'row'}}>
           <View style = {{width: '50%', height: '100%'}}>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              this.backToFirstService()
-              this.point(!this.state.p1_serving)
+              this.handleReturnWinner()
               }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Return Winner
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              this.backToFirstService()
-              this.point(this.state.p1_serving)
+              this.handleReturnError()
               }}>
               <Text style = {{fontSize: 19, color: 'red'}}>
                 Return Error
@@ -193,7 +312,7 @@ class MatchDetailed extends React.Component {
             </TouchableOpacity>
           </View>
           <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button} onPress={() => {this.setState({data: "Ball in Play"})}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {this.handleBallIn()}}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Ball in 
               </Text>
@@ -204,8 +323,7 @@ class MatchDetailed extends React.Component {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              this.backToFirstService()
-              this.point(this.state.p1_serving)
+              this.handleAce()
               }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Ace
