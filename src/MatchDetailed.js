@@ -141,7 +141,7 @@ class MatchDetailed extends React.Component {
         temp.p2.points_won++
         temp.p1.unforced_errors++
       } else {
-        temp.p2.doublefaults++
+        temp.p2.double_faults++
         temp.p1.points_won++
         temp.p2.unforced_errors++
       }
@@ -154,6 +154,7 @@ class MatchDetailed extends React.Component {
       }
     }
     this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
   handleBallIn() {
@@ -167,6 +168,7 @@ class MatchDetailed extends React.Component {
       temp.p2.first_serve++
     }
     this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
   handleAce() {
@@ -191,6 +193,7 @@ class MatchDetailed extends React.Component {
       }
     }
     this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
   handleReturnWinner() {
@@ -213,6 +216,7 @@ class MatchDetailed extends React.Component {
       }
     }
     this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
   handleReturnError() {
@@ -239,6 +243,46 @@ class MatchDetailed extends React.Component {
       temp.p2.points_won++
     }
     this.setState({stats: temp})
+    console.log(this.state.stats)
+  }
+
+  handleWinners(p) {
+    let temp = this.state.stats
+    if (p) {
+      temp.p1.winners++
+    } else {
+      temp.p2.winners++
+    }
+    this.backToFirstService()
+    this.point(true)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
+  }
+
+  handleForcedError(p) {
+    let temp = this.state.stats
+    if (p) {
+      temp.p1.forced_errors++
+    } else {
+      temp.p2.forced_errors++
+    }
+    this.backToFirstService()
+    this.point(!p)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
+  }
+
+  handleUnforcedError(p) {
+    let temp = this.state.stats
+    if (p) {
+      temp.p1.unforced_errors++
+    } else {
+      temp.p2.unforced_errors++
+    }
+    this.backToFirstService()
+    this.point(!p)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
   renderServer1() {
@@ -346,24 +390,21 @@ class MatchDetailed extends React.Component {
         <View style = {{height: '88%', flexDirection: 'row'}}>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(true)
+                this.handleWinners(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(false)
+                this.handleForcedError(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(false)
+                this.handleUnforcedError(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
@@ -372,24 +413,21 @@ class MatchDetailed extends React.Component {
             </View>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(false)
+                this.handleWinners(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(true)
+                this.handleForcedError(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                this.backToFirstService()
-                this.point(true)
+                this.handleUnforcedError(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
