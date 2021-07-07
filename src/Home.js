@@ -162,20 +162,17 @@ function Home(props) {
                 p1_serving: p1_serving,
                 p1_name: p1_name,
                 p2_name: p2_name,
+                simple: simple,
               }
             }
-            dispatch(addMatch({
-              data: new_match,
-            }));
+            dispatch(addMatch({data: new_match}));
             setModal2Visible(false);
             if (simple) {
               props.navigation.navigate('Match Simple', {
-                ...new_match,
                 index: matches.length,
               })
             } else {
               props.navigation.navigate('Match Detailed', {
-                ...new_match,
                 index: matches.length,
               });
             }
@@ -221,16 +218,14 @@ function Home(props) {
   return (
     <SafeAreaView style = {{flex: 1}}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        {/*
+        {
           matches.map((match, index) => (
             <TouchableOpacity
               onPress={() => {
                 if (match.info.done) return;
                 if (match.info.simple) {
                   props.navigation.navigate('Match Simple', {
-                    score: match.score,
-                    info: match.info,
-                    index: length,
+                    index: index
                   })
                 } else {
                   // match detailed
@@ -240,47 +235,7 @@ function Home(props) {
               <Scoreboard match={match} key={"match"+index}/>
             </TouchableOpacity>
           ))
-            */}
-        {
-          matches.map((match, index) => (
-            <Scoreboard match={match} key={"match"+index}/>
-          ))
         }
-        {/*
-          <TouchableOpacity
-            style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
-            onPress={() => this.props.navigation.navigate('Details')}
-          >
-            <View style = {{flexDirection: 'row', justifyContent:'space-between'}}>
-              <View>
-                <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%'}}>
-                  Ken
-                </Text>
-                <Text style = {{fontSize: 17, fontWeight: '500'}}>
-                  Jun
-                </Text>
-              </View>
-              <View style = {{flexDirection: 'row'}}>
-                <View style = {{alignSelf: 'flex-end'}}>
-                  <Text style = {{fontSize: 17, fontWeight: '300', paddingBottom: '2%', paddingRight: '3%'}}>
-                    0
-                  </Text>
-                  <Text style = {{fontSize: 17, fontWeight: '500'}}>
-                    6
-                  </Text>
-                </View>
-                <View style = {{alignSelf: 'flex-end'}}>
-                  <Text style = {{fontSize: 17, fontWeight: '500', paddingBottom: '2%', paddingRight: '3%'}}>
-                    6
-                  </Text>
-                  <Text style = {{fontSize: 17, fontWeight: '300'}}>
-                    0
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-          */}
         <Modal
           animationType="slide"
           transparent={true}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import Scoreboard from './components/Scoreboard';
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -21,8 +21,9 @@ function MatchSimple(props) {
   const matches = useSelector((state) => state.matches.array)
   const dispatch = useDispatch()
 
-  const [score, setScore] = useState(props.route.params.score);
-  const [info, setInfo] = useState(props.route.params.info);
+  const index = props.route.params.index
+  const [score, setScore] = useState(matches[index].score);
+  const [info, setInfo] = useState(matches[index].info);
 
   useEffect(() => {
     dispatch(setMatch({
@@ -80,7 +81,8 @@ function MatchSimple(props) {
   }
 
   return(
-    <View style={{flex: 1}}>
+    <SafeAreaView style = {{flex: 1}}>
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
       <Scoreboard match={{score: score, info: info}}/>
       <View style={{flexDirection: "row", justifyContent: "center"}}>
         <TouchableOpacity
@@ -109,7 +111,9 @@ function MatchSimple(props) {
           <Text style={{fontSize: 32}}>{info.p2_name}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
+    </SafeAreaView>
+
   );
 }
 
