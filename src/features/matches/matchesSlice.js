@@ -12,10 +12,16 @@ export const matchesSlice = createSlice({
     setMatch: (state, action) => {
       state.array[action.payload.index] = action.payload.data;
     },
+    deleteMatch: (state, action) => {
+      state.array.splice(action.payload.index,1);
+    },
+    clear: (state) => {
+      state.array = [];
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addMatch, setMatch } = matchesSlice.actions
+export const { addMatch, setMatch, deleteMatch, clear } = matchesSlice.actions
 
 export default matchesSlice.reducer

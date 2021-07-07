@@ -55,7 +55,7 @@ class Scoreboard extends React.Component {
     }
     return (
       <View
-        style = {{flexDirection: 'row', width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
+        style = {{flexDirection: 'row', width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
       >
         <View style={{flex: 1, alignItems: 'center'}}>
           <Text style={styles.unit}>

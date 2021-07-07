@@ -6,8 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Scoreboard from './components/Scoreboard';
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addMatch, setMatch } from './features/matches/matchesSlice';
+import { addMatch, setMatch, deleteMatch, clear } from './features/matches/matchesSlice';
 
+const debug = 1;
 const empty_score = {
   set: [{
     game: [
@@ -198,11 +199,29 @@ function Home(props) {
       </View>
     )
   }
+
+  const renderDebug = () => {
+    return (
+      <View style={{flex: 1, padding: '5%'}}>
+        <Button
+          title="print matches"
+          onPress={() => console.log(matches)}
+        />
+        <Button
+          title="clear storage"
+          onPress={() => {
+            //AsyncStorage.removeItem('matches')
+            dispatch(clear());
+          }}
+        />
+      </View>
+    )
+  }
   
   return (
     <SafeAreaView style = {{flex: 1}}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
-        {
+        {/*
           matches.map((match, index) => (
             <TouchableOpacity
               onPress={() => {
@@ -218,16 +237,15 @@ function Home(props) {
                 }
               }}
             >
-              <Text>{match.info.date}</Text>
               <Scoreboard match={match} key={"match"+index}/>
             </TouchableOpacity>
           ))
-        }
-        {/*
-          this.state.matches.map((match, index) => (
-            <Scoreboard data={match} key={"match"+index}/>
+            */}
+        {
+          matches.map((match, index) => (
+            <Scoreboard match={match} key={"match"+index}/>
           ))
-          */}
+        }
         {/*
           <TouchableOpacity
             style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
@@ -277,27 +295,11 @@ function Home(props) {
         >
           {renderModal2()}
         </Modal>
+        {debug ? renderDebug() : null}
       </ScrollView>
     </SafeAreaView>
   );
 
-  const renderDebug = () => {
-    return (
-      <View style={{flex: 1, padding: '5%'}}>
-        <Button
-          title="print state"
-          onPress={() => console.log(this.state)}
-        />
-        <Button
-          title="clear storage"
-          onPress={() => {
-            //AsyncStorage.removeItem('matches')
-            dispatch();
-          }}
-        />
-      </View>
-    )
-  }
 }
 
 const styles = StyleSheet.create({
