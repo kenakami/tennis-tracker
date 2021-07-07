@@ -5,7 +5,7 @@ Array.prototype.last = function(){
     return this[this.length - 1];
 };
 
-const score = {
+const convert = {
   0: 0,
   1: 15,
   2: 30,
@@ -36,9 +36,11 @@ class Scoreboard extends React.Component {
   }
 
   componentDidMount() {
+    /*
     if (this.props.data) {
       this.setState(this.props.data);
     }
+    */
   }
 
   render() {
@@ -52,27 +54,27 @@ class Scoreboard extends React.Component {
       )
     }
     return (
-      <TouchableOpacity
-        style = {{flexDirection: 'row', width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
+      <View
+        style = {{flexDirection: 'row', width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
       >
         <View style={{flex: 1, alignItems: 'center'}}>
           <Text style={styles.unit}>
-            {this.props.data.p1_serving ? '*' : null}
+            {this.props.match.info.p1_serving ? '*' : null}
           </Text>
           <Text style={styles.unit}>
-            {this.props.data.p1_serving ? null : '*'}
+            {this.props.match.info.p1_serving ? null : '*'}
           </Text>
         </View>
         <View style={{flex: 10}}>
           <Text style={styles.unit}>
-            {this.props.data.p1_name}
+            {this.props.match.info.p1_name}
           </Text>
           <Text style={styles.unit}>
-            {this.props.data.p2_name}
+            {this.props.match.info.p2_name}
           </Text>
         </View>
         {
-          this.props.data.match.set.map((set, index) => (
+          this.props.match.score.set.map((set, index) => (
             <View style={{flex: 1, alignItems: 'center'}} key={"set"+index}>
               <Text style={styles.unit}>
                 {set.p1}
@@ -86,14 +88,14 @@ class Scoreboard extends React.Component {
         {
           <View style={{flex: 1, alignItems: 'center', backgroundColor: 'gray'}} key={"point"}>
             <Text style={styles.unit}>
-              {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p1]}
+              {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
             </Text>
             <Text style={styles.unit}>
-              {this.props.data.done ? 0 : score[this.props.data.match.set.last().game.last().p2]}
+              {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
             </Text>
           </View>
         }
-      </TouchableOpacity>
+      </View>
     );
   }
 }

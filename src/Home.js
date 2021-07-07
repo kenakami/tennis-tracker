@@ -8,7 +8,7 @@ import Scoreboard from './components/Scoreboard';
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch } from './features/matches/matchesSlice';
 
-const empty_match = {
+const empty_score = {
   set: [{
     game: [
       {
@@ -25,6 +25,9 @@ const empty_match = {
 }
 
 function Home(props) {
+  const matches = useSelector((state) => state.matches.array)
+  const dispatch = useDispatch()
+
   const [modal1Visible, setModal1Visible] = useState(false);
   const [modal2Visible, setModal2Visible] = useState(false);
   const [simple, setSimple] = useState(true);
@@ -39,11 +42,6 @@ function Home(props) {
     {label: 'Player 1 Serving', value: true},
     {label: 'Player 2 Serving', value: false}
   ];
-
-  const matches = useSelector((state) => state.matches.array)
-  const dispatch = useDispatch()
-
-
 
   useEffect(() => {
     // Same as componentDidMount
@@ -157,24 +155,27 @@ function Home(props) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            dispatch(addMatch({
-              match: empty_match,
-              p1_serving: p1_serving,
-              p1_name: p1_name,
-              p2_name: p2_name,
-            }));
-            setModal2Visible(!modal2Visible);
-            if (simple) {
-              props.navigation.navigate('Match Simple', {
+            let new_match = {
+              score: empty_score,
+              info: {
                 p1_serving: p1_serving,
                 p1_name: p1_name,
                 p2_name: p2_name,
+              }
+            }
+            dispatch(addMatch({
+              data: new_match,
+            }));
+            setModal2Visible(false);
+            if (simple) {
+              props.navigation.navigate('Match Simple', {
+                ...new_match,
+                index: matches.length,
               })
             } else {
               props.navigation.navigate('Match Detailed', {
-                p1_serving: p1_serving,
-                p1_name: p1_name,
-                p2_name: p2_name,
+                ...new_match,
+                index: matches.length,
               });
             }
             reset();
@@ -193,19 +194,33 @@ function Home(props) {
             Cancel
           </Text>
         </TouchableOpacity>
-
         </View>
       </View>
     )
   }
-
   
   return (
     <SafeAreaView style = {{flex: 1}}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         {
           matches.map((match, index) => (
-            <Scoreboard data={match} key={"match"+index}/>
+            <TouchableOpacity
+              onPress={() => {
+                if (match.info.done) return;
+                if (match.info.simple) {
+                  props.navigation.navigate('Match Simple', {
+                    score: match.score,
+                    info: match.info,
+                    index: length,
+                  })
+                } else {
+                  // match detailed
+                }
+              }}
+            >
+              <Text>{match.info.date}</Text>
+              <Scoreboard match={match} key={"match"+index}/>
+            </TouchableOpacity>
           ))
         }
         {/*
@@ -276,8 +291,8 @@ function Home(props) {
         <Button
           title="clear storage"
           onPress={() => {
-            AsyncStorage.removeItem('matches')
-            this.setState({matches: []});
+            //AsyncStorage.removeItem('matches')
+            dispatch();
           }}
         />
       </View>

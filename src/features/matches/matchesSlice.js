@@ -7,10 +7,10 @@ export const matchesSlice = createSlice({
   },
   reducers: {
     addMatch: (state, action) => {
-      state.array.push(action.payload);
+      state.array.push(action.payload.data);
     },
     setMatch: (state, action) => {
-      state.array[action.index] = action.data;
+      state.array[action.payload.index] = action.payload.data;
     },
   },
 })
