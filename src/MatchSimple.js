@@ -113,7 +113,6 @@ class MatchSimple extends React.Component {
             style={{padding: '2%'}}
             onPress={() => {
               this.point(true);
-              this.props.route.params.update(this.props.route.params.index, this.state);
             }}
           >
             <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p1]}</Text>
@@ -126,7 +125,6 @@ class MatchSimple extends React.Component {
             style={{padding: '2%'}}
             onPress={() => {
               this.point(false);
-              this.props.route.params.update(this.props.route.params.index, this.state);
             }}
           >
             <Text style={{fontSize: 64}}>{this.state.done ? 0 : score[this.state.match.set.last().game.last().p2]}</Text>

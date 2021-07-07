@@ -1,117 +1,132 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput, KeyboardAvoidingView} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import util from './util.js';
 import Scoreboard from './components/Scoreboard';
 
-const debug = 1;
+import { useSelector, useDispatch } from 'react-redux'
+import { addMatch, setMatch } from './features/matches/matchesSlice';
 
-const storeData = async (key, value) => {
-  try {
-    const jsonValue = JSON.stringify(value)
-    await AsyncStorage.setItem(key, jsonValue)
-  } catch (e) {
-    // saving error
-    console.log(e);
-  }
-}
-
-
-const getData = async (key) => {
-  try {
-    const jsonValue = await AsyncStorage.getItem(key)
-    return jsonValue != null ? JSON.parse(jsonValue) : null;
-  } catch(e) {
-    // error reading value
-    console.log(e);
-  }
-}
-
-
-class Home extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      matches: [],
-      modalVisible: false,
-      firstModalVisible: false,
-      radio_props: [
-        {label: 'Simple', value: true},
-        {label: 'Detailed', value: false}
-      ],
-      radio_props1: [
-        {label: 'Player 1 Serving', value: true},
-        {label: 'Player 2 Serving', value: false}
-      ],
-      simple: true,
-      p1_serving: true,
-      p1_name: 'Player 1',
-      p2_name: 'Player 2',
-      test: "init",
-    }
-  }
-
-  componentDidMount() {
-    this.props.navigation.setOptions({headerRight: () => (
-      <TouchableOpacity onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}>
-          <AntDesign name="plus" size={21} color= "black"/>
-      </TouchableOpacity>
-    ),
-    headerRightContainerStyle: {marginRight:'4%'}})
-    this.getMatches();
-  }
-
-  reset() {
-    this.setState({
-      simple: true, 
-      p1_serving: true,
-    })
-  }
-
-  async setMatch(index, data) {
-    let temp = this.state.matches;
-    temp[index] = data;
-    await storeData('matches', temp);
-    await this.setState({matches: temp});
-  }
-
-  async getMatches() {
-    let temp = await getData('matches')
-    temp = temp ? temp : [];
-    this.setState({matches: temp});
-  }
-
-  async addMatch() {
-    let temp = this.state.matches;
-    temp.push({
-      match: {
-        set: [{
-          game: [
-            {
-              point: [],
-              p1: 0,
-              p2: 0,
-            },
-          ],
-          p1: 0,
-          p2: 0,
-        }],
+const empty_match = {
+  set: [{
+    game: [
+      {
+        point: [],
         p1: 0,
         p2: 0,
       },
-      p1_serving: this.state.p1_serving,
-      p1_name: this.state.p1_name,
-      p2_name: this.state.p2_name,
-    });
-    console.log(temp);
-    await this.setState({matches: temp});
-    await storeData('matches', temp);
+    ],
+    p1: 0,
+    p2: 0,
+  }],
+  p1: 0,
+  p2: 0,
+}
+
+function Home(props) {
+  const [modal1Visible, setModal1Visible] = useState(false);
+  const [modal2Visible, setModal2Visible] = useState(false);
+  const [simple, setSimple] = useState(true);
+  const [p1_serving, set_p1_serving] = useState(true);
+  const [p1_name, set_p1_name] = useState('Player 1');
+  const [p2_name, set_p2_name] = useState('Player 2');
+  const radio_props = [
+    {label: 'Simple', value: true},
+    {label: 'Detailed', value: false}
+  ];
+  const radio_props1 = [
+    {label: 'Player 1 Serving', value: true},
+    {label: 'Player 2 Serving', value: false}
+  ];
+
+  const matches = useSelector((state) => state.matches.array)
+  const dispatch = useDispatch()
+
+
+
+  useEffect(() => {
+    // Same as componentDidMount
+    props.navigation.setOptions({headerRight: () => (
+      <TouchableOpacity onPress = {() => setModal1Visible(true)}>
+        <AntDesign name="plus" size={21} color= "black"/>
+      </TouchableOpacity>
+    ),
+    headerRightContainerStyle: {marginRight:'4%'}})
+  },[]);
+
+  const reset = () => {
+    setSimple(true);
+    set_p1_serving(true);
+    set_p1_name('Player 1');
+    set_p2_name('Player 2');
   }
 
-  renderModal() {
+  const renderModal1 = () => {
+    return (
+      <View style={styles.centeredView}>
+        <View style={styles.firstModalView}>
+          <View>
+            <Text style  = {{fontSize: 20, paddingBottom: '3%'}}>
+              Player Information
+            </Text>
+            <View
+              style={{
+                borderBottomColor: 'black',
+                borderBottomWidth: 0.7,
+              }}
+            />
+          </View>
+          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center', marginTop: '7%'}}>
+            <Text>
+              Player One
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText = {(name) => set_p1_name(name)}
+            />
+          </View>
+          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center'}}>
+            <Text>
+              Player Two
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText = {(name) => set_p2_name(name)}
+            />
+          </View>
+          <View style = {{alignSelf: 'flex-start'}}>
+            <RadioForm
+              radio_props={radio_props1}
+              initial={0}
+              onPress={(value) => set_p1_serving(value)}
+            />
+          </View>
+          <TouchableOpacity
+            onPress={() => {
+              setModal1Visible(false);
+              setModal2Visible(true);
+            }}
+            style={[styles.button, {backgroundColor: '#0b79bd'}]}
+          >
+            <Text style = {{color: '#ffffff'}}>
+              Continue
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setModal1Visible(!modal1Visible)}
+            style={[styles.button, {backgroundColor: '#f0e9e9'}]}
+          >
+            <Text>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )
+  }
+
+  const renderModal2 = () => {
     return (
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
@@ -135,32 +150,34 @@ class Home extends React.Component {
           </Text>
         <View style = {{alignSelf: 'flex-start'}}>
           <RadioForm
-            radio_props={this.state.radio_props}
+            radio_props={radio_props}
             initial={0}
-            onPress={(value) => {this.setState({simple: value})}}
+            onPress={(value) => setSimple(!simple)}
           />
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.addMatch();
-            this.setState({modalVisible: !this.state.modalVisible})
-            if (this.state.simple) {
-              this.props.navigation.navigate('Match Simple', {
-                p1_serving: this.state.p1_serving,
-                p1_name: this.state.p1_name,
-                p2_name: this.state.p2_name,
-                update: this.setMatch,
-                index: this.state.matches.length,
+            dispatch(addMatch({
+              match: empty_match,
+              p1_serving: p1_serving,
+              p1_name: p1_name,
+              p2_name: p2_name,
+            }));
+            setModal2Visible(!modal2Visible);
+            if (simple) {
+              props.navigation.navigate('Match Simple', {
+                p1_serving: p1_serving,
+                p1_name: p1_name,
+                p2_name: p2_name,
               })
             } else {
-              this.props.navigation.navigate('Match Detailed', {
-                p1_serving: this.state.p1_serving,
-                p1_name: this.state.p1_name,
-                p2_name: this.state.p2_name,
-                index: this.state.matches.length,
+              props.navigation.navigate('Match Detailed', {
+                p1_serving: p1_serving,
+                p1_name: p1_name,
+                p2_name: p2_name,
               });
             }
-            this.reset()
+            reset();
           }}
           style={[styles.button, {backgroundColor: '#0b79bd'}]}
         >
@@ -169,7 +186,7 @@ class Home extends React.Component {
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress = {() => this.setState({modalVisible: !this.state.modalVisible})}
+          onPress = {() => setModal2Visible(!modal2Visible)}
           style={[styles.button, {backgroundColor: '#f0e9e9'}]}
         >
           <Text>
@@ -182,80 +199,21 @@ class Home extends React.Component {
     )
   }
 
-  renderInformation() {
-    return (
-      <View style={styles.centeredView}>
-        <View style={styles.firstModalView}>
-          <View>
-            <Text style  = {{fontSize: 20, paddingBottom: '3%'}}>
-              Player Information
-            </Text>
-            <View
-              style={{
-                borderBottomColor: 'black',
-                borderBottomWidth: 0.7,
-              }}
-            />
-          </View>
-          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center', marginTop: '7%'}}>
-            <Text>
-              Player One
-            </Text>
-            <TextInput
-              style={styles.input}
-              onChangeText = {(name) => this.setState({p1_name: name})}
-            />
-          </View>
-          <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center'}}>
-            <Text>
-              Player Two
-            </Text>
-            <TextInput
-              style={styles.input}
-              onChangeText = {(name) => this.setState({p2_name: name})}
-            />
-          </View>
-          <View style = {{alignSelf: 'flex-start'}}>
-            <RadioForm
-              radio_props={this.state.radio_props1}
-              initial={0}
-              onPress={(value) => {this.setState({p1_serving: value})}}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({firstModalVisible: !this.state.firstModalVisible})
-              this.setState({modalVisible: !this.state.modalVisible})
-            }}
-            style={[styles.button, {backgroundColor: '#0b79bd'}]}
-          >
-            <Text style = {{color: '#ffffff'}}>
-              Continue
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress = {() => this.setState({firstModalVisible: !this.state.firstModalVisible})}
-            style={[styles.button, {backgroundColor: '#f0e9e9'}]}
-          >
-            <Text>
-              Cancel
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    )
-  }
   
-  render() {
-    return (
-      <SafeAreaView style = {{flex: 1}}>
-        <ScrollView contentContainerStyle={{flexGrow: 1}}>
-          {
-            this.state.matches.map((match, index) => (
-              <Scoreboard data={match} key={"match"+index}/>
-            ))
-          }
-          {/*
+  return (
+    <SafeAreaView style = {{flex: 1}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+        {
+          matches.map((match, index) => (
+            <Scoreboard data={match} key={"match"+index}/>
+          ))
+        }
+        {/*
+          this.state.matches.map((match, index) => (
+            <Scoreboard data={match} key={"match"+index}/>
+          ))
+          */}
+        {/*
           <TouchableOpacity
             style = {{width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '3%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%'}}
             onPress={() => this.props.navigation.navigate('Details')}
@@ -290,27 +248,25 @@ class Home extends React.Component {
             </View>
           </TouchableOpacity>
           */}
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={this.state.firstModalVisible}
-            >
-              {this.renderInformation()}
-          </Modal>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={this.state.modalVisible}
-            >
-              {this.renderModal()}
-          </Modal>
-          {debug ? this.renderDebug() : null}
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modal1Visible}
+        >
+          {renderModal1()}
+        </Modal>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modal2Visible}
+        >
+          {renderModal2()}
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
+  );
 
-  renderDebug() {
+  const renderDebug = () => {
     return (
       <View style={{flex: 1, padding: '5%'}}>
         <Button

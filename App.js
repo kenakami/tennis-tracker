@@ -5,6 +5,8 @@ import { StyleSheet, Text, View, Button, TouchableOpacity} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AntDesign } from '@expo/vector-icons'; 
+import store from './store'
+import { Provider } from 'react-redux'
 
 import Home from './src/Home';
 import Details from './src/Details.js';
@@ -31,6 +33,7 @@ function App() {
     );
   }
   return (
+    <Provider store={store}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Match History" component={Home} />
@@ -39,6 +42,7 @@ function App() {
         <Stack.Screen name="Match Simple" component={MatchSimple} />
       </Stack.Navigator>
     </NavigationContainer>
+    </Provider>
   );
 }
 
