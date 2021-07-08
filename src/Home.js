@@ -4,9 +4,10 @@ import { AntDesign } from '@expo/vector-icons';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
 import Scoreboard from './components/Scoreboard';
+import util from './util';
 
 import { useSelector, useDispatch } from 'react-redux'
-import { addMatch, setMatch, deleteMatch, clear } from './features/matches/matchesSlice';
+import { addMatch, setMatch, deleteMatch, clear, setMatches } from './features/matches/matchesSlice';
 
 const debug = 1;
 const empty_score = {
@@ -75,6 +76,10 @@ function Home(props) {
       </TouchableOpacity>
     ),
     headerRightContainerStyle: {marginRight:'4%'}})
+
+    util.loadMatches().then((res) => {
+      dispatch(setMatches(res));
+    });
   },[]);
 
   const reset = () => {
@@ -231,8 +236,8 @@ function Home(props) {
         <Button
           title="clear storage"
           onPress={() => {
-            //AsyncStorage.removeItem('matches')
             dispatch(clear());
+            util.saveMatches([]);
           }}
         />
       </View>
@@ -257,8 +262,9 @@ function Home(props) {
                   })
                 }
               }}
+              key={index}
             >
-              <Scoreboard match={match} key={"match"+index}/>
+              <Scoreboard match={match}/>
             </TouchableOpacity>
           ))
         }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
 import Scoreboard from './components/Scoreboard';
+import util from './util';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch } from './features/matches/matchesSlice';
@@ -35,10 +36,13 @@ function MatchDetailed(props) {
         stats: stats,
       },
     }));
-
     return () => {
     };
   },[score, info]);
+
+  useEffect(() => {
+    util.storeData('matches', matches);
+  },[matches]);
 
   const point = (p) => {
     if (info.done) return;

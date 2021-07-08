@@ -36,4 +36,24 @@ const getData = async (key) => {
   }
 }
 
-export default { convert, last, storeData, getData }
+const loadMatches = async () => {
+  try {
+    const jsonValue = await AsyncStorage.getItem('matches')
+    return jsonValue ? JSON.parse(jsonValue) : [];
+  } catch(e) {
+    // error reading value
+    console.log(e);
+  }
+}
+
+const saveMatches = async (matches) => {
+  try {
+    const jsonValue = JSON.stringify(matches)
+    await AsyncStorage.setItem('matches', jsonValue)
+  } catch (e) {
+    // saving error
+    console.log(e);
+  }
+}
+
+export default { convert, last, storeData, getData, saveMatches, loadMatches }
