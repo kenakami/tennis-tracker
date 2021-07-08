@@ -106,6 +106,7 @@ function Home(props) {
             <TextInput
               style={styles.input}
               onChangeText = {(name) => set_p1_name(name)}
+              autoCorrect = {false}
             />
           </View>
           <View style = {{flexDirection: 'row', alignSelf: 'flex-start', width: '100%', justifyContent: 'space-between', paddingBottom: '4%', alignItems: 'center'}}>
@@ -115,6 +116,7 @@ function Home(props) {
             <TextInput
               style={styles.input}
               onChangeText = {(name) => set_p2_name(name)}
+              autoCorrect = {false}
             />
           </View>
           <View style = {{alignSelf: 'flex-start'}}>
@@ -186,6 +188,7 @@ function Home(props) {
                 p1_name: p1_name,
                 p2_name: p2_name,
                 simple: simple,
+                state: 'First Service'
               },
               stats: empty_stats,
             }
@@ -266,6 +269,7 @@ function Home(props) {
           animationType="slide"
           transparent={true}
           visible={modal1Visible}
+
         >
           {renderModal1()}
         </Modal>

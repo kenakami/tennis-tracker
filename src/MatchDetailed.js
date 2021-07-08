@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, ActionSheetIOS } from 'react-native';
 import Scoreboard from './components/Scoreboard';
+import { Ionicons } from '@expo/vector-icons';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch } from './features/matches/matchesSlice';
@@ -13,7 +14,7 @@ const convert = {
   4: 'Ad',
 }
 
-Array.prototype.last = function(){
+Array.prototype.last = function () {
   return this[this.length - 1];
 };
 
@@ -27,6 +28,16 @@ function MatchDetailed(props) {
   const [stats, setStats] = useState(matches[index].stats);
 
   useEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => props.navigation.navigate('Details', {
+          index: index
+        })}>
+          <Ionicons name="stats-chart" size={20} color="black" />
+        </TouchableOpacity>
+      ),
+      headerRightContainerStyle: { marginRight: '4%' }
+    })
     dispatch(setMatch({
       index: props.route.params.index,
       data: {
@@ -38,7 +49,7 @@ function MatchDetailed(props) {
 
     return () => {
     };
-  },[score, info]);
+  }, [score, info]);
 
   const point = (p) => {
     if (info.done) return;
@@ -52,44 +63,44 @@ function MatchDetailed(props) {
       cur_game.p2 = 3;
     }
     // Game
-    if (Math.abs(cur_game.p1-cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
+    if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = match.set.last();
       cur_set[winner]++;
       // Set
       // TODO tie breakers
-      if (Math.abs(cur_set.p1-cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
+      if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
         match[winner]++;
         // Match
-        if (Math.max(match.p1, match.p2) >= Math.trunc(info.best_of/2)+1) {
-          setInfo({...info, done: true});
+        if (Math.max(match.p1, match.p2) >= Math.trunc(info.best_of / 2) + 1) {
+          setInfo({ ...info, done: true });
           setScore(match);
           alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
-        } 
+        }
         match.set.push({
           game: [],
           p1: 0,
           p2: 0,
         });
       }
-      setInfo({...info, p1_serving: !info.p1_serving});
+      setInfo({ ...info, p1_serving: !info.p1_serving });
       match.set.last().game.push({
         point: [],
         p1: 0,
         p2: 0,
       });
     }
-    setScore({...match});
+    setScore({ ...match });
   }
 
   const backToFirstService = () => {
-    setInfo({...info, state:'First Service'});
+    setInfo({ ...info, state: 'First Service' });
   }
 
   const handleFault = () => {
     let temp = JSON.parse(JSON.stringify(stats));
     if (info.state == "Second Service") {
-      setInfo({...info, state:'First Service'});
+      setInfo({ ...info, state: 'First Service' });
       point(!info.p1_serving)
       if (info.p1_serving) {
         temp.p1.double_faults++
@@ -101,7 +112,7 @@ function MatchDetailed(props) {
         temp.p2.unforced_errors++
       }
     } else {
-      setInfo({...info, state:'Second Service'});
+      setInfo({ ...info, state: 'Second Service' });
       if (info.p1_serving) {
         temp.p1.total_first_serves++
       } else {
@@ -113,7 +124,7 @@ function MatchDetailed(props) {
   }
 
   const handleBallIn = () => {
-    setInfo({...info, state:'Ball in Play'});
+    setInfo({ ...info, state: 'Ball in Play' });
     let temp = JSON.parse(JSON.stringify(stats));
     if (info.p1_serving & info.state == "First Service") {
       temp.p1.total_first_serves++
@@ -240,159 +251,175 @@ function MatchDetailed(props) {
     console.log(stats)
   }
 
+  const actionSheet = () =>
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ["Cancel", "Generate number", "Reset"],
+        destructiveButtonIndex: 2,
+        cancelButtonIndex: 0,
+        userInterfaceStyle: 'dark'
+      },
+      buttonIndex => {
+        if (buttonIndex === 0) {
+          // cancel action
+        } else if (buttonIndex === 1) {
+        } else if (buttonIndex === 2) {
+        }
+      }
+    );
   const renderServer1 = () => {
-    return(
-      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
-        <View style = {{height: '88%', flexDirection: 'row'}}>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {handleBallIn()}}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                    Ball in 
-                  </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress = {() => {handleFault()}}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Fault
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleAce()
-                }}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Ace
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleReturnWinner()
-                }}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Return Winner
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleReturnError()
-                }}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Return Error
-                </Text>
-              </TouchableOpacity>
+    return (
+      <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
+        <View style={{ height: '88%', flexDirection: 'row' }}>
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => { handleBallIn() }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Ball in
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => { handleFault() }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Fault
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleAce()
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Ace
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleReturnWinner()
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Return Winner
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleReturnError()
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Return Error
+              </Text>
+            </TouchableOpacity>
 
-            </View>
+          </View>
         </View>
-        <TouchableOpacity style = {styles.button}>
-            <Text style = {{fontSize: 19}}>
-                Undo
-            </Text>
+        <TouchableOpacity style={styles.button}>
+          <Text style={{ fontSize: 19 }}>
+            Undo
+          </Text>
         </TouchableOpacity>
       </View>
     );
   }
 
   const renderServer2 = () => {
-    return(
-      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
-        <View style = {{height: '88%', flexDirection: 'row'}}>
-          <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button} onPress={() => {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
+        <View style={{ height: '88%', flexDirection: 'row' }}>
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => {
               handleReturnWinner()
-              }}>
-              <Text style = {{fontSize: 19, color: 'green'}}>
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
                 Return Winner
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress={() => {
+            <TouchableOpacity style={styles.button} onPress={() => {
               handleReturnError()
-              }}>
-              <Text style = {{fontSize: 19, color: 'red'}}>
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
                 Return Error
               </Text>
             </TouchableOpacity>
           </View>
-          <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button} onPress={() => {handleBallIn()}}>
-              <Text style = {{fontSize: 19, color: 'green'}}>
-                Ball in 
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => { handleBallIn() }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Ball in
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress = {() => {handleFault()}}>
-              <Text style = {{fontSize: 19, color: 'red'}}>
+            <TouchableOpacity style={styles.button} onPress={() => { handleFault() }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
                 Fault
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress={() => {
+            <TouchableOpacity style={styles.button} onPress={() => {
               handleAce()
-              }}>
-              <Text style = {{fontSize: 19, color: 'green'}}>
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
                 Ace
               </Text>
             </TouchableOpacity>
           </View>
-          </View>
-          <TouchableOpacity style = {styles.button}>
-              <Text style = {{fontSize: 19}}>
-                  Undo
-              </Text>
-          </TouchableOpacity>
         </View>
+        <TouchableOpacity style={styles.button}>
+          <Text style={{ fontSize: 19 }}>
+            Undo
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
   const renderBallIn = () => {
-    return(
-      <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
-        <View style = {{height: '88%', flexDirection: 'row'}}>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleWinners(true)
-                }}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Winner
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleForcedError(true)
-                }}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Forced Error
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleUnforcedError(true)
-                }}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Unforced error
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleWinners(false)
-                }}>
-                <Text style = {{fontSize: 19, color: 'green'}}>
-                  Winner
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleForcedError(false)
-                }}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Forced Error
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress={() => {
-                handleUnforcedError(false)
-                }}>
-                <Text style = {{fontSize: 19, color: 'red'}}>
-                  Unforced error
-                </Text>
-              </TouchableOpacity>
-            </View>
+    return (
+      <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
+        <View style={{ height: '88%', flexDirection: 'row' }}>
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleWinners(true)
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Winner
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleForcedError(true)
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Forced Error
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleUnforcedError(true)
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Unforced error
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ width: '50%', height: '100%' }}>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleWinners(false)
+            }}>
+              <Text style={{ fontSize: 19, color: 'green' }}>
+                Winner
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleForcedError(false)
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Forced Error
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={() => {
+              handleUnforcedError(false)
+            }}>
+              <Text style={{ fontSize: 19, color: 'red' }}>
+                Unforced error
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity style = {styles.button}>
-          <Text style = {{fontSize: 19}}>
-              Undo
+        <TouchableOpacity style={styles.button}>
+          <Text style={{ fontSize: 19 }}>
+            Undo
           </Text>
         </TouchableOpacity>
       </View>
@@ -400,40 +427,40 @@ function MatchDetailed(props) {
   }
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
-      <Scoreboard match={{score: score, info: info}} />
-      <View style = {{flexDirection: 'row', marginTop: '3%'}}>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'left'}}>
-          {info.p1_name}
-        </Text>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'center', color: '#00bfff'}}>
-          {info.state}
-        </Text>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'right'}}>
-          {info.p2_name}
-        </Text>
-      </View> 
-      {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
-      {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
-      {info.state == "Ball in Play" ? renderBallIn() : null}
-    </ScrollView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <Scoreboard match={{ score: score, info: info }} />
+        <View style={{ flexDirection: 'row', marginTop: '3%' }}>
+          <Text style={{ flex: 1, fontSize: 18, textAlign: 'left' }}>
+            {info.p1_name}
+          </Text>
+          <Text style={{ flex: 1, fontSize: 18, textAlign: 'center', color: '#00bfff' }}>
+            {info.state}
+          </Text>
+          <Text style={{ flex: 1, fontSize: 18, textAlign: 'right' }}>
+            {info.p2_name}
+          </Text>
+        </View>
+        {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
+        {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
+        {info.state == "Ball in Play" ? renderBallIn() : null}
+      </ScrollView>
     </SafeAreaView>
   );
 
 }
 
 const styles = StyleSheet.create({
-    button: {
-      justifyContent: 'center', 
-      alignItems: 'center', 
-      flex: 1,
-      borderColor: 'black', 
-      borderWidth: 1,
-      backgroundColor: 'white',
-      padding: '0.5%'
-    }
-  });
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    borderColor: 'black',
+    borderWidth: 1,
+    backgroundColor: 'white',
+    padding: '0.5%'
+  }
+});
 
 
 export default MatchDetailed;

@@ -16,20 +16,17 @@ import MatchDetailed from './src/MatchDetailed';
 const Stack = createStackNavigator();
 
 const debug = 0;
-const setting = {
-  p1_name: "Ken",
-  p2_name: "Jun",
-  best_of: 1,
-}
 
 function App() {
   if (debug) {
     return (
+      <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Match">
-          <Stack.Screen name="Match" component={Match} />
+        <Stack.Navigator initialRouteName="Details">
+          <Stack.Screen name="Details" component={Details} />
         </Stack.Navigator>
       </NavigationContainer>
+      </Provider>
     );
   }
   return (
