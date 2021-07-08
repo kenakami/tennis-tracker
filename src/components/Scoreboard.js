@@ -1,8 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 Array.prototype.last = function(){
-    return this[this.length - 1];
+  return this[this.length - 1];
 };
 
 const convert = {
@@ -44,15 +44,6 @@ class Scoreboard extends React.Component {
   }
 
   render() {
-    if (false) {
-      return (
-        <View
-          style = {{flexDirection: 'row', width: '90%', height: '11%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
-        >
-          <ActivityIndicator size="large" color="black" />
-        </View>
-      )
-    }
     return (
       <View
         style = {{flexDirection: 'row', width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
@@ -85,16 +76,14 @@ class Scoreboard extends React.Component {
             </View>
           ))
         }
-        {
-          <View style={{flex: 1, alignItems: 'center', backgroundColor: 'gray'}} key={"point"}>
-            <Text style={styles.unit}>
-              {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
-            </Text>
-            <Text style={styles.unit}>
-              {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
-            </Text>
-          </View>
-        }
+        <View style={{flex: 1, alignItems: 'center', backgroundColor: 'gray'}} key={"point"}>
+          <Text style={styles.unit}>
+            {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
+          </Text>
+          <Text style={styles.unit}>
+            {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
+          </Text>
+        </View>
       </View>
     );
   }

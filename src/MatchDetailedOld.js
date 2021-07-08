@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, Pressable} from 'react-native';
 import Scoreboard from './components/Scoreboard';
 
-import { useSelector, useDispatch } from 'react-redux'
-import { addMatch, setMatch } from './features/matches/matchesSlice';
-
-const convert = {
+const score = {
   0: 0,
   1: 15,
   2: 30,
@@ -17,32 +14,71 @@ Array.prototype.last = function(){
   return this[this.length - 1];
 };
 
-function MatchDetailed(props) {
-  const matches = useSelector((state) => state.matches.array)
-  const dispatch = useDispatch()
-
-  const index = props.route.params.index
-  const [score, setScore] = useState(matches[index].score);
-  const [info, setInfo] = useState(matches[index].info);
-  const [stats, setStats] = useState(matches[index].stats);
-
-  useEffect(() => {
-    dispatch(setMatch({
-      index: props.route.params.index,
-      data: {
-        score: score,
-        info: info,
+class MatchDetailed extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      match: {
+        set: [{
+          game: [
+            {
+              point: [],
+              p1: 0,
+              p2: 0,
+            },
+          ],
+          p1: 0,
+          p2: 0,
+        }],
+        p1: 0,
+        p2: 0,
       },
-    }));
+      p1_name: "Foo",
+      p2_name: "Bar",
+      best_of: 1,
+      data: 'First Service',
+      stats: {
+        p1: {
+          aces: 0,
+          first_serve: 0,
+          double_faults: 0,
+          winners: 0,
+          unforced_errors: 0,
+          forced_errors: 0,
+          total_first_serves: 0,
+          points_won: 0,
+        },
+        p2: {
+          aces: 0,
+          first_serve: 0,
+          double_faults: 0,
+          winners: 0,
+          unforced_errors: 0,
+          forced_errors: 0,
+          total_first_serves: 0,
+          points_won: 0,
+        },
+      },
+      total_points: 0
+    }
+  }
 
-    return () => {
-    };
-  },[score, info]);
+  componentDidMount() {
+    this.setState({
+      p1_serving: this.props.route?.params?.p1_serving,
+      p1_name: this.props.route?.params?.p1_name,
+      p2_name: this.props.route?.params?.p2_name,
+    });
+  }
 
-  const point = (p) => {
-    if (info.done) return;
+  /**
+   * Awwards point and returns an array of formatted game score (eg. 40-15)
+   * @param p   Player to award point (true = p1, false = p2)
+   */
+  point(p) {
+    if (this.state.done) return;
     const winner = p ? 'p1' : 'p2';
-    let match = JSON.parse(JSON.stringify(score));    // copy current score into match
+    let match = this.state.match;
     let cur_game = match.set.last().game.last();
     cur_game[winner]++;
     cur_game.point.push(p);
@@ -59,10 +95,10 @@ function MatchDetailed(props) {
       if (Math.abs(cur_set.p1-cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
         match[winner]++;
         // Match
-        if (Math.max(match.p1, match.p2) >= Math.trunc(info.best_of/2)+1) {
-          setInfo({...info, done: true});
-          setScore(match);
-          alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
+        if (Math.max(match.p1, match.p2) >= Math.trunc(this.state.best_of/2)+1) {
+          this.setState({done: true});
+          this.setState({match: match});
+          alert(`Game, Set, Match!\nWon by ${p ? this.state.p1_name : this.state.p2_name}`);
           return;
         } 
         match.set.push({
@@ -71,26 +107,36 @@ function MatchDetailed(props) {
           p2: 0,
         });
       }
-      setInfo({...info, p1_serving: !info.p1_serving});
+      this.setState({p1_serving: !this.state.p1_serving});
       match.set.last().game.push({
         point: [],
         p1: 0,
         p2: 0,
       });
     }
-    setScore({...match});
+    this.setState({match: match});
   }
 
-  const backToFirstService = () => {
-    setInfo({...info, state:'First Service'});
+  /**
+   * Returns the game score in an array (eg. 40-15)
+   */
+  gameScore() {
+    // TODO
+    let p1 = score[this.state.match.set.last().game.last().p1];
+    let p2 = score[this.state.match.set.last().game.last().p2];
+    return [p1, p2];
   }
 
-  const handleFault = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.state == "Second Service") {
-      setInfo({...info, state:'First Service'});
-      point(!info.p1_serving)
-      if (info.p1_serving) {
+  backToFirstService() {
+    this.setState({data: 'First Service'})
+  }
+
+  handleFault() {
+    let temp = this.state.stats
+    if (this.state.data == "Second Service") {
+      this.setState({data: 'First Service'})
+      this.point(!this.state.p1_serving)
+      if (this.state.p1_serving) {
         temp.p1.double_faults++
         temp.p2.points_won++
         temp.p1.unforced_errors++
@@ -100,40 +146,40 @@ function MatchDetailed(props) {
         temp.p2.unforced_errors++
       }
     } else {
-      setInfo({...info, state:'Second Service'});
-      if (info.p1_serving) {
+      this.setState({data: 'Second Service'})
+      if (this.state.p1_serving) {
         temp.p1.total_first_serves++
       } else {
         temp.p2.total_first_serves++
       }
     }
-    setStats(temp);
-    console.log(stats);
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleBallIn = () => {
-    setInfo({...info, state:'Ball in Play'});
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving & info.state == "First Service") {
+  handleBallIn() {
+    this.setState({data: "Ball in Play"})
+    let temp = this.state.stats
+    if (this.state.p1_serving & this.state.data == "First Service") {
       temp.p1.total_first_serves++
       temp.p1.first_serve++
-    } else if (info.p2_serving & info.state == "First Service") {
+    } else if (this.state.p2_serving & this.state.data == "First Service") {
       temp.p2.total_first_serves++
       temp.p2.first_serve++
     }
-    setStats(temp);
-    console.log(stats)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleAce = () => {
-    backToFirstService()
-    point(info.p1_serving)
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
+  handleAce() {
+    this.backToFirstService()
+    this.point(this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
       temp.p1.aces++
       temp.p1.winners++
       temp.p1.points_won++
-      if (info.state == "First Service") {
+      if (this.state.data == "First Service") {
         temp.p1.first_serve++
         temp.p1.total_first_serves++
       }
@@ -141,44 +187,44 @@ function MatchDetailed(props) {
       temp.p2.aces++
       temp.p2.winners++
       temp.p2.points_won++
-      if (info.state == "First Service") {
+      if (this.state.data == "First Service") {
         temp.p2.first_serve++
         temp.p2.total_first_serves++
       }
     }
-    setStats(temp);
-    console.log(stats)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleReturnWinner = () => {
-    backToFirstService()
-    point(!info.p1_serving)
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
+  handleReturnWinner() {
+    this.backToFirstService()
+    this.point(!this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
       temp.p2.winners++
       temp.p2.points_won++
-      if (info.state == "First Service") {
+      if (this.state.data == "First Service") {
         temp.p1.first_serve++
         temp.p1.total_first_serves++
       }
     } else {
       temp.p1.winners++
       temp.p1.points_won++
-      if (info.state == "First Service") {
+      if (this.state.data == "First Service") {
         temp.p2.first_serve++
         temp.p2.total_first_serves++
       }
     }
-    setStats(temp);
-    console.log(stats)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleReturnError = () => {
-    backToFirstService()
-    point(info.p1_serving)
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
-      if (info.state == "First Service") {
+  handleReturnError() {
+    this.backToFirstService()
+    this.point(this.state.p1_serving)
+    let temp = this.state.stats
+    if (this.state.p1_serving) {
+      if (this.state.data == "First Service") {
         temp.p2.forced_errors++
         temp.p1.total_first_serves++
         temp.p1.first_serve++
@@ -187,7 +233,7 @@ function MatchDetailed(props) {
       }
       temp.p1.points_won++
     } else {
-      if (info.state == "First Service") {
+      if (this.state.data == "First Service") {
         temp.p1.forced_errors++
         temp.p2.total_first_serves++
         temp.p2.first_serve++
@@ -196,66 +242,66 @@ function MatchDetailed(props) {
       }
       temp.p2.points_won++
     }
-    setStats(temp);
-    console.log(stats)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleWinners = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
+  handleWinners(p) {
+    let temp = this.state.stats
     if (p) {
       temp.p1.winners++
     } else {
       temp.p2.winners++
     }
-    backToFirstService()
-    point(true)
-    setStats(temp);
-    console.log(stats)
+    this.backToFirstService()
+    this.point(true)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleForcedError = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
+  handleForcedError(p) {
+    let temp = this.state.stats
     if (p) {
       temp.p1.forced_errors++
     } else {
       temp.p2.forced_errors++
     }
-    backToFirstService()
-    point(!p)
-    setStats(temp);
-    console.log(stats)
+    this.backToFirstService()
+    this.point(!p)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const handleUnforcedError = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
+  handleUnforcedError(p) {
+    let temp = this.state.stats
     if (p) {
       temp.p1.unforced_errors++
     } else {
       temp.p2.unforced_errors++
     }
-    backToFirstService()
-    point(!p)
-    setStats(temp);
-    console.log(stats)
+    this.backToFirstService()
+    this.point(!p)
+    this.setState({stats: temp})
+    console.log(this.state.stats)
   }
 
-  const renderServer1 = () => {
+  renderServer1() {
     return(
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
             <View style = {{width: '50%', height: '100%'}}>
-              <TouchableOpacity style = {styles.button} onPress={() => {handleBallIn()}}>
+              <TouchableOpacity style = {styles.button} onPress={() => {this.handleBallIn()}}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                     Ball in 
                   </Text>
               </TouchableOpacity>
-              <TouchableOpacity style = {styles.button} onPress = {() => {handleFault()}}>
+              <TouchableOpacity style = {styles.button} onPress = {() => {this.handleFault()}}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Fault
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleAce()
+                this.handleAce()
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Ace
@@ -264,14 +310,14 @@ function MatchDetailed(props) {
             </View>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleReturnWinner()
+                this.handleReturnWinner()
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Return Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleReturnError()
+                this.handleReturnError()
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Return Error
@@ -289,20 +335,20 @@ function MatchDetailed(props) {
     );
   }
 
-  const renderServer2 = () => {
+  renderServer2() {
     return(
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
           <View style = {{width: '50%', height: '100%'}}>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              handleReturnWinner()
+              this.handleReturnWinner()
               }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Return Winner
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              handleReturnError()
+              this.handleReturnError()
               }}>
               <Text style = {{fontSize: 19, color: 'red'}}>
                 Return Error
@@ -310,18 +356,18 @@ function MatchDetailed(props) {
             </TouchableOpacity>
           </View>
           <View style = {{width: '50%', height: '100%'}}>
-            <TouchableOpacity style = {styles.button} onPress={() => {handleBallIn()}}>
+            <TouchableOpacity style = {styles.button} onPress={() => {this.handleBallIn()}}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Ball in 
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity style = {styles.button} onPress = {() => {handleFault()}}>
+            <TouchableOpacity style = {styles.button} onPress = {() => {this.handleFault()}}>
               <Text style = {{fontSize: 19, color: 'red'}}>
                 Fault
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style = {styles.button} onPress={() => {
-              handleAce()
+              this.handleAce()
               }}>
               <Text style = {{fontSize: 19, color: 'green'}}>
                 Ace
@@ -338,27 +384,27 @@ function MatchDetailed(props) {
     );
   }
 
-  const renderBallIn = () => {
+  renderBallIn() {
     return(
       <View style = {{flex: 1, backgroundColor: '#6495ed'}}>
         <View style = {{height: '88%', flexDirection: 'row'}}>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleWinners(true)
+                this.handleWinners(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleForcedError(true)
+                this.handleForcedError(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleUnforcedError(true)
+                this.handleUnforcedError(true)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
@@ -367,21 +413,21 @@ function MatchDetailed(props) {
             </View>
             <View style = {{width: '50%', height: '100%'}}>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleWinners(false)
+                this.handleWinners(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'green'}}>
                   Winner
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleForcedError(false)
+                this.handleForcedError(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Forced Error
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity style = {styles.button} onPress={() => {
-                handleUnforcedError(false)
+                this.handleUnforcedError(false)
                 }}>
                 <Text style = {{fontSize: 19, color: 'red'}}>
                   Unforced error
@@ -398,28 +444,27 @@ function MatchDetailed(props) {
     );
   }
 
-  return (
+  render() {
+    return (
     <SafeAreaView style={{flex: 1}}>
-    <ScrollView contentContainerStyle={{flexGrow: 1}}>
-      <Scoreboard match={{score: score, info: info}} />
-      <View style = {{flexDirection: 'row', marginTop: '3%'}}>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'left'}}>
-          {info.p1_name}
-        </Text>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'center', color: '#00bfff'}}>
-          {info.state}
-        </Text>
-        <Text style = {{flex: 1, fontSize: 18, textAlign: 'right'}}>
-          {info.p2_name}
-        </Text>
+      <Scoreboard data={this.state} />
+        <View style = {{flexDirection: 'row', justifyContent: 'space-between', marginTop: '3%'}}>
+          <Text style = {{fontSize: 18}}>
+              {this.state.p1_name}
+          </Text>
+          <Text style = {{color: '#00bfff', fontSize: 18}}>
+              {this.state.data}
+          </Text>
+          <Text style = {{fontSize: 18}}>
+              {this.state.p2_name}
+          </Text>
       </View> 
-      {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
-      {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
-      {info.state == "Ball in Play" ? renderBallIn() : null}
-    </ScrollView>
+      {this.state.p1_serving & this.state.data != "Ball in Play" ? this.renderServer1() : null}
+      {!this.state.p1_serving & this.state.data != "Ball in Play" ? this.renderServer2() : null}
+      {this.state.data == "Ball in Play" ? this.renderBallIn() : null}
     </SafeAreaView>
-  );
-
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -433,6 +478,4 @@ const styles = StyleSheet.create({
       padding: '0.5%'
     }
   });
-
-
 export default MatchDetailed;

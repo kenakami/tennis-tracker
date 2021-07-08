@@ -24,6 +24,29 @@ const empty_score = {
   p1: 0,
   p2: 0,
 }
+const empty_stats = {
+  p1: {
+    aces: 0,
+    first_serve: 0,
+    double_faults: 0,
+    winners: 0,
+    unforced_errors: 0,
+    forced_errors: 0,
+    total_first_serves: 0,
+    points_won: 0,
+  },
+  p2: {
+    aces: 0,
+    first_serve: 0,
+    double_faults: 0,
+    winners: 0,
+    unforced_errors: 0,
+    forced_errors: 0,
+    total_first_serves: 0,
+    points_won: 0,
+  },
+}
+
 
 function Home(props) {
   const matches = useSelector((state) => state.matches.array)
@@ -163,7 +186,8 @@ function Home(props) {
                 p1_name: p1_name,
                 p2_name: p2_name,
                 simple: simple,
-              }
+              },
+              stats: empty_stats,
             }
             dispatch(addMatch({data: new_match}));
             setModal2Visible(false);
@@ -228,7 +252,9 @@ function Home(props) {
                     index: index
                   })
                 } else {
-                  // match detailed
+                  props.navigation.navigate('Match Detailed', {
+                    index: index
+                  })
                 }
               }}
             >
