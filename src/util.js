@@ -36,11 +36,4 @@ const getData = async (key) => {
   }
 }
 
-/**
- * Takes in a match object and returns its match history as an array of strings
- */
-const generateMatchHistory = (match) => {
-  return [];
-}
-
 export default { convert, last, storeData, getData }
