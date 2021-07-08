@@ -3,7 +3,7 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const score = {
+const convert = {
   0: 0,
   1: 15,
   2: 30,
@@ -11,11 +11,11 @@ export const score = {
   4: 'Ad',
 }
 
-export const last = (arr) => {
+const last = (arr) => {
   return arr[arr.length - 1];
 }
 
-export const storeData = async (key, value) => {
+const storeData = async (key, value) => {
   try {
     const jsonValue = JSON.stringify(value)
     await AsyncStorage.setItem(key, jsonValue)
@@ -26,7 +26,7 @@ export const storeData = async (key, value) => {
 }
 
 
-export const getData = async (key) => {
+const getData = async (key) => {
   try {
     const jsonValue = await AsyncStorage.getItem(key)
     return jsonValue != null ? JSON.parse(jsonValue) : null;
@@ -36,3 +36,11 @@ export const getData = async (key) => {
   }
 }
 
+/**
+ * Takes in a match object and returns its match history as an array of strings
+ */
+const generateMatchHistory = (match) => {
+  return [];
+}
+
+export default { convert, last, storeData, getData }
