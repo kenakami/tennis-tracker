@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import util from '../../util'
 
 export const matchesSlice = createSlice({
   name: 'matches',
@@ -18,10 +19,13 @@ export const matchesSlice = createSlice({
     clear: (state) => {
       state.array = [];
     },
+    setMatches: (state, action) => {
+      state.array = action.payload;
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { addMatch, setMatch, deleteMatch, clear } = matchesSlice.actions
+export const { addMatch, setMatch, deleteMatch, clear, setMatches } = matchesSlice.actions
 
 export default matchesSlice.reducer
