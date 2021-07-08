@@ -32,6 +32,7 @@ function MatchDetailed(props) {
       data: {
         score: score,
         info: info,
+        stats: stats,
       },
     }));
 
