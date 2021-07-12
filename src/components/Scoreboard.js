@@ -97,6 +97,7 @@ class Scoreboard extends React.Component {
 const styles = StyleSheet.create({
   unit: {
     fontSize: 18,
+    height: 24,
     fontWeight: '500',
   },
   column_set: {

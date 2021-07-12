@@ -119,8 +119,10 @@ function MatchDetailed(props) {
       setInfo({ ...info, state: 'Second Service' });
       if (info.p1_serving) {
         temp.p1.total_first_serves++
+        temp.p1.total_second_serves++
       } else {
         temp.p2.total_first_serves++
+        temp.p2.total_second_serves++
       }
     }
     setStats(temp);
@@ -152,6 +154,9 @@ function MatchDetailed(props) {
       if (info.state == "First Service") {
         temp.p1.first_serve++
         temp.p1.total_first_serves++
+        temp.p1.first_serve_win++
+      } else {
+        temp.p1.second_serve_win++
       }
     } else {
       temp.p2.aces++
@@ -160,6 +165,9 @@ function MatchDetailed(props) {
       if (info.state == "First Service") {
         temp.p2.first_serve++
         temp.p2.total_first_serves++
+        temp.p2.first_serve_win++
+      } else {
+        temp.p2.second_serve_win++
       }
     }
     setStats(temp);
@@ -198,8 +206,10 @@ function MatchDetailed(props) {
         temp.p2.forced_errors++
         temp.p1.total_first_serves++
         temp.p1.first_serve++
+        temp.p1.first_serve_win++
       } else {
         temp.p2.unforced_errors++
+        temp.p1.second_serve_win++
       }
       temp.p1.points_won++
     } else {
@@ -207,8 +217,10 @@ function MatchDetailed(props) {
         temp.p1.forced_errors++
         temp.p2.total_first_serves++
         temp.p2.first_serve++
+        temp.p2.first_serve_win++
       } else {
         temp.p1.unforced_errors++
+        temp.p2.second_serve_win++
       }
       temp.p2.points_won++
     }
@@ -220,8 +232,20 @@ function MatchDetailed(props) {
     let temp = JSON.parse(JSON.stringify(stats));
     if (p) {
       temp.p1.winners++
+      temp.p1.points_won++
+      if (info.p1_serving & info.state == "First Service") {
+        temp.p1.first_serve_win++
+      } else if (info.p1_serving & info.state == "Second Service") {
+        temp.p1.second_serve_win++
+      }
     } else {
       temp.p2.winners++
+      temp.p2.points_won++
+      if (!info.p1_serving & info.state == "First Service") {
+        temp.p2.first_serve_win++
+      } else if (!info.p1_serving & info.state == "Second Service") {
+        temp.p2.second_serve_win++
+      }
     }
     backToFirstService()
     point(true)
@@ -233,8 +257,20 @@ function MatchDetailed(props) {
     let temp = JSON.parse(JSON.stringify(stats));
     if (p) {
       temp.p1.forced_errors++
+      temp.p2.points_won++
+      if (!info.p1_serving & info.state == "First Service") {
+        temp.p2.first_serve_win++
+      } else if (!info.p1_serving & info.state == "Second Service") {
+        temp.p2.second_serve_win++
+      }
     } else {
       temp.p2.forced_errors++
+      temp.p1.points_won++
+      if (info.p1_serving & info.state == "First Service") {
+        temp.p1.first_serve_win++
+      } else if (info.p1_serving & info.state == "Second Service") {
+        temp.p1.second_serve_win++
+      }
     }
     backToFirstService()
     point(!p)
@@ -246,8 +282,20 @@ function MatchDetailed(props) {
     let temp = JSON.parse(JSON.stringify(stats));
     if (p) {
       temp.p1.unforced_errors++
+      temp.p2.points_won++
+      if (!info.p1_serving & info.state == "First Service") {
+        temp.p2.first_serve_win++
+      } else if (!info.p1_serving & info.state == "Second Service") {
+        temp.p2.second_serve_win++
+      }
     } else {
       temp.p2.unforced_errors++
+      temp.p1.points_won++
+      if (info.p1_serving & info.state == "First Service") {
+        temp.p1.first_serve_win++
+      } else if (info.p1_serving & info.state == "Second Service") {
+        temp.p1.second_serve_win++
+      }
     }
     backToFirstService()
     point(!p)

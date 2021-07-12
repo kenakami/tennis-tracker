@@ -35,6 +35,9 @@ const empty_stats = {
     forced_errors: 0,
     total_first_serves: 0,
     points_won: 0,
+    first_serve_win: 0,
+    total_second_serves: 0,
+    second_serve_win: 0,
   },
   p2: {
     aces: 0,
@@ -45,6 +48,9 @@ const empty_stats = {
     forced_errors: 0,
     total_first_serves: 0,
     points_won: 0,
+    first_serve_win: 0,
+    total_second_serves: 0,
+    second_serve_win: 0,
   },
 }
 
@@ -193,6 +199,7 @@ function Home(props) {
                 p1_name: p1_name,
                 p2_name: p2_name,
                 simple: simple,
+                
                 state: 'First Service'
               },
               stats: empty_stats,
