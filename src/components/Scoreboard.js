@@ -46,27 +46,31 @@ class Scoreboard extends React.Component {
   render() {
     return (
       <View
-        style = {{flexDirection: 'row', width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0}}
+        style = {{flexDirection: 'row', width: '90%', borderRadius: 10, alignSelf: 'center', marginTop: '4%', borderColor: 'black', backgroundColor: 'white', borderWidth: 2, padding: '2%', paddingLeft: 0, justifyContent: 'space-between'}}
       >
-        <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={styles.unit}>
-            {this.props.match.info.p1_serving ? '*' : null}
-          </Text>
-          <Text style={styles.unit}>
-            {this.props.match.info.p1_serving ? null : '*'}
-          </Text>
+        <View style={{flexDirection: 'row'}}>
+          <View style={{alignItems: 'center', width: 24}}>
+            <Text style={styles.unit}>
+              {this.props.match.info.p1_serving ? '*' : null}
+            </Text>
+            <Text style={styles.unit}>
+              {this.props.match.info.p1_serving ? null : '*'}
+            </Text>
+          </View>
+          <View>
+            <Text style={styles.unit}>
+              {this.props.match.info.p1_name}
+            </Text>
+            <Text style={styles.unit}>
+              {this.props.match.info.p2_name}
+            </Text>
+          </View>
         </View>
-        <View style={{flex: 10}}>
-          <Text style={styles.unit}>
-            {this.props.match.info.p1_name}
-          </Text>
-          <Text style={styles.unit}>
-            {this.props.match.info.p2_name}
-          </Text>
-        </View>
+
+        <View style={{flexDirection: 'row'}}>
         {
           this.props.match.score.set.map((set, index) => (
-            <View style={{flex: 1, alignItems: 'center'}} key={"set"+index}>
+            <View style={styles.column_set} key={"set"+index}>
               <Text style={styles.unit}>
                 {set.p1}
               </Text>
@@ -76,13 +80,14 @@ class Scoreboard extends React.Component {
             </View>
           ))
         }
-        <View style={{flex: 1, alignItems: 'center', backgroundColor: 'gray'}} key={"point"}>
+        <View style={styles.column_game} key={"point"}>
           <Text style={styles.unit}>
             {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
           </Text>
           <Text style={styles.unit}>
             {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
           </Text>
+        </View>
         </View>
       </View>
     );
@@ -93,7 +98,15 @@ const styles = StyleSheet.create({
   unit: {
     fontSize: 18,
     fontWeight: '500',
-    flex: 1,
+  },
+  column_set: {
+    alignItems: 'center',
+    width: 20,
+  },
+  column_game: {
+    alignItems: 'center',
+    width: 24,
+    backgroundColor: 'gray',
   }
 });
 

@@ -95,7 +95,6 @@ function MatchSimple(props) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Scoreboard match={{ score: score, info: info }} />
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <TouchableOpacity
@@ -124,7 +123,6 @@ function MatchSimple(props) {
             <Text style={{ fontSize: 32 }}>{info.p2_name}</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
     </SafeAreaView>
 
   );

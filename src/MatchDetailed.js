@@ -432,23 +432,21 @@ function MatchDetailed(props) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Scoreboard match={{ score: score, info: info }} />
-        <View style={{ flexDirection: 'row', marginTop: '3%' }}>
-          <Text style={{ flex: 1, fontSize: 18, textAlign: 'left' }}>
-            {info.p1_name}
-          </Text>
-          <Text style={{ flex: 1, fontSize: 18, textAlign: 'center', color: '#00bfff' }}>
-            {info.state}
-          </Text>
-          <Text style={{ flex: 1, fontSize: 18, textAlign: 'right' }}>
-            {info.p2_name}
-          </Text>
-        </View>
-        {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
-        {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
-        {info.state == "Ball in Play" ? renderBallIn() : null}
-      </ScrollView>
+      <Scoreboard match={{ score: score, info: info }} />
+      <View style={{ flexDirection: 'row', marginTop: '3%' }}>
+        <Text style={{ flex: 1, fontSize: 18, textAlign: 'left' }}>
+          {info.p1_name}
+        </Text>
+        <Text style={{ flex: 1, fontSize: 18, textAlign: 'center', color: '#00bfff' }}>
+          {info.state}
+        </Text>
+        <Text style={{ flex: 1, fontSize: 18, textAlign: 'right' }}>
+          {info.p2_name}
+        </Text>
+      </View>
+      {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
+      {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
+      {info.state == "Ball in Play" ? renderBallIn() : null}
     </SafeAreaView>
   );
 

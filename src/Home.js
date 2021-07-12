@@ -275,7 +275,6 @@ function Home(props) {
           animationType="slide"
           transparent={true}
           visible={modal1Visible}
-
         >
           {renderModal1()}
         </Modal>
