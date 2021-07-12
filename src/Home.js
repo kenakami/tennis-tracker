@@ -203,7 +203,7 @@ function Home(props) {
                 p1_name: p1_name,
                 p2_name: p2_name,
                 simple: simple,
-                
+                first_serve: true,
                 state: 'First Service'
               },
               stats: empty_stats,

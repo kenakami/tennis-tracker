@@ -60,10 +60,11 @@ function MatchDetailed(props) {
     const winner = p ? 'p1' : 'p2';
     let match = JSON.parse(JSON.stringify(score));    // copy current score into match
     let cur_game = match.set.last().game.last();
+    let temp_stats = JSON.parse(JSON.stringify(stats));    // copy current score into match
 
     // check break point
     if (cur_game[!info.p1_serving] >= 3 && cur_game[info.p1_serving] <= 2) {
-      stats[winner].break_points_total++;
+      temp_stats[winner].break_points_total++;
     }
 
     cur_game[winner]++;
@@ -76,7 +77,8 @@ function MatchDetailed(props) {
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = match.set.last();
       cur_set[winner]++;
-      if (p != p1_serving) stats[winner].break_points_won++;
+      if (p != info.p1_serving) stats[winner].break_points_won++;
+      setStats(temp_stats);
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
@@ -102,16 +104,17 @@ function MatchDetailed(props) {
       });
     }
     setScore({ ...match });
+    setStats(temp_stats);
   }
 
   const backToFirstService = () => {
-    setInfo({ ...info, state: 'First Service' });
+    setInfo({ ...info, state: 'First Service', first_serve: true});
   }
 
   const handleFault = () => {
     let temp = JSON.parse(JSON.stringify(stats));
     if (info.state == "Second Service") {
-      setInfo({ ...info, state: 'First Service' });
+      setInfo({ ...info, state: 'First Service', first_serve: true});
       point(!info.p1_serving)
       if (info.p1_serving) {
         temp.p1.double_faults++
@@ -123,7 +126,7 @@ function MatchDetailed(props) {
         temp.p2.unforced_errors++
       }
     } else {
-      setInfo({ ...info, state: 'Second Service' });
+      setInfo({ ...info, state: 'Second Service', first_serve: false});
       if (info.p1_serving) {
         temp.p1.total_first_serves++
         temp.p1.total_second_serves++
@@ -240,17 +243,17 @@ function MatchDetailed(props) {
     if (p) {
       temp.p1.winners++
       temp.p1.points_won++
-      if (info.p1_serving & info.state == "First Service") {
+      if (info.p1_serving & info.first_serve) {
         temp.p1.first_serve_win++
-      } else if (info.p1_serving & info.state == "Second Service") {
+      } else if (info.p1_serving & !info.first_serve) {
         temp.p1.second_serve_win++
       }
     } else {
       temp.p2.winners++
       temp.p2.points_won++
-      if (!info.p1_serving & info.state == "First Service") {
+      if (!info.p1_serving & info.first_serve) {
         temp.p2.first_serve_win++
-      } else if (!info.p1_serving & info.state == "Second Service") {
+      } else if (!info.p1_serving & !info.first_serve) {
         temp.p2.second_serve_win++
       }
     }
@@ -265,17 +268,17 @@ function MatchDetailed(props) {
     if (p) {
       temp.p1.forced_errors++
       temp.p2.points_won++
-      if (!info.p1_serving & info.state == "First Service") {
+      if (!info.p1_serving & info.first_serve) {
         temp.p2.first_serve_win++
-      } else if (!info.p1_serving & info.state == "Second Service") {
+      } else if (!info.p1_serving & !info.first_serve) {
         temp.p2.second_serve_win++
       }
     } else {
       temp.p2.forced_errors++
       temp.p1.points_won++
-      if (info.p1_serving & info.state == "First Service") {
+      if (info.p1_serving & info.first_serve) {
         temp.p1.first_serve_win++
-      } else if (info.p1_serving & info.state == "Second Service") {
+      } else if (info.p1_serving & !info.first_serve) {
         temp.p1.second_serve_win++
       }
     }
@@ -290,17 +293,17 @@ function MatchDetailed(props) {
     if (p) {
       temp.p1.unforced_errors++
       temp.p2.points_won++
-      if (!info.p1_serving & info.state == "First Service") {
+      if (!info.p1_serving & info.first_serve) {
         temp.p2.first_serve_win++
-      } else if (!info.p1_serving & info.state == "Second Service") {
+      } else if (!info.p1_serving & !info.first_serve) {
         temp.p2.second_serve_win++
       }
     } else {
       temp.p2.unforced_errors++
       temp.p1.points_won++
-      if (info.p1_serving & info.state == "First Service") {
+      if (info.p1_serving & info.first_serve) {
         temp.p1.first_serve_win++
-      } else if (info.p1_serving & info.state == "Second Service") {
+      } else if (info.p1_serving & !info.first_serve) {
         temp.p1.second_serve_win++
       }
     }
