@@ -258,7 +258,7 @@ function MatchDetailed(props) {
       }
     }
     backToFirstService()
-    point(true)
+    point(p)
     setStats(temp);
     console.log(stats)
   }
