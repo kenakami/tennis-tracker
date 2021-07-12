@@ -35,6 +35,8 @@ const empty_stats = {
     forced_errors: 0,
     total_first_serves: 0,
     points_won: 0,
+    break_points_won: 0,
+    break_points_total: 0,
   },
   p2: {
     aces: 0,
@@ -45,6 +47,8 @@ const empty_stats = {
     forced_errors: 0,
     total_first_serves: 0,
     points_won: 0,
+    break_points_won: 0,
+    break_points_total: 0,
   },
 }
 

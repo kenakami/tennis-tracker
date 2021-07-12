@@ -60,6 +60,12 @@ function MatchDetailed(props) {
     const winner = p ? 'p1' : 'p2';
     let match = JSON.parse(JSON.stringify(score));    // copy current score into match
     let cur_game = match.set.last().game.last();
+
+    // check break point
+    if (cur_game[!info.p1_serving] >= 3 && cur_game[info.p1_serving] <= 2) {
+      stats[winner].break_points_total++;
+    }
+
     cur_game[winner]++;
     cur_game.point.push(p);
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
@@ -70,6 +76,7 @@ function MatchDetailed(props) {
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = match.set.last();
       cur_set[winner]++;
+      if (p != p1_serving) stats[winner].break_points_won++;
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
