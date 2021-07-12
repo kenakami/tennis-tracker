@@ -38,6 +38,8 @@ const empty_stats = {
     first_serve_win: 0,
     total_second_serves: 0,
     second_serve_win: 0,
+    break_points_won: 0,
+    break_points_total: 0,
   },
   p2: {
     aces: 0,
@@ -51,6 +53,8 @@ const empty_stats = {
     first_serve_win: 0,
     total_second_serves: 0,
     second_serve_win: 0,
+    break_points_won: 0,
+    break_points_total: 0,
   },
 }
 
