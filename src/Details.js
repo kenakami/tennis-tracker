@@ -22,10 +22,10 @@ function Details(props) {
       <ScrollView>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 35, marginLeft: '10%' }}>
-            Ken
+            {info.p1_name}
           </Text>
           <Text style={{ fontSize: 35, marginRight: '10%' }}>
-            Jun
+            {info.p2_name}
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -52,13 +52,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {Math.round(stats.p1.first_serve / stats.p1.total_first_serves * 100)}%
+            {(stats.p1.total_first_serves == 0) ? 0 : Math.round(stats.p1.first_serve / stats.p1.total_first_serves * 100)}%
           </Text>
           <Text style={styles.middleText}>
             First serve %
           </Text>
           <Text style={styles.rightText}>
-            {Math.round(stats.p2.first_serve / stats.p1.total_first_serves * 100)}%
+            {(stats.p2.total_first_serves == 0) ? 0 : Math.round(stats.p2.first_serve / stats.p2.total_first_serves * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -96,35 +96,35 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            1
+            {(stats.p1.total_first_serves == 0) ? 0 : Math.round(stats.p1.first_serve_win / stats.p1.first_serve * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 1st serve
           </Text>
           <Text style={styles.rightText}>
-            2
+            {(stats.p2.total_first_serves == 0) ? 0 : Math.round(stats.p2.first_serve_win / stats.p2.first_serve * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            1
+            {(stats.p1.total_second_serves == 0) ? 0 : Math.round(stats.p1.second_serve_win / stats.p1.total_second_serves * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 2nd serve
           </Text>
           <Text style={styles.rightText}>
-            2
+            {(stats.p2.total_second_serves == 0) ? 0 : Math.round(stats.p2.second_serve_win / stats.p2.total_second_serves * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            1
+            {stats.p1.break_points_won}
           </Text>
           <Text style={styles.middleText}>
             Break points Won
           </Text>
           <Text style={styles.rightText}>
-            2
+            {stats.p2.break_points_won}
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -140,13 +140,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            1
+            {((stats.p1.points_won + stats.p2.points_won) == 0) ? 0 : Math.round(stats.p1.points_won / (stats.p1.points_won + stats.p2.points_won) * 100)}%
           </Text>
           <Text style={styles.middleText}>
             % of Points Won
           </Text>
           <Text style={styles.rightText}>
-            2
+            {((stats.p1.points_won + stats.p2.points_won) == 0) ? 0 : Math.round(stats.p2.points_won / (stats.p1.points_won + stats.p2.points_won) * 100)}%
           </Text>
         </View>
       </ScrollView>
