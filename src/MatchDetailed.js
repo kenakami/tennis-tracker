@@ -14,6 +14,7 @@ const convert = {
   3: 40,
   4: 'Ad',
 }
+const boolToP = (bool) => bool ? 'p1' : 'p2';
 
 Array.prototype.last = function () {
   return this[this.length - 1];
@@ -59,15 +60,17 @@ function MatchDetailed(props) {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
     let match = JSON.parse(JSON.stringify(score));    // copy current score into match
+    let temp_stats = JSON.parse(JSON.stringify(stats));    // copy current stats into temp_stats
     let cur_game = match.set.last().game.last();
-
-    // check break point
-    if (cur_game[!info.p1_serving] >= 3 && cur_game[info.p1_serving] <= 2) {
-      stats[winner].break_points_total++;
-    }
-
     cur_game[winner]++;
     cur_game.point.push(p);
+
+    // check break point
+    if (cur_game[boolToP(!info.p1_serving)] >= 3 && cur_game[boolToP(info.p1_serving)] <= 2) {
+      temp_stats[boolToP(!info.p1_serving)].break_points_total++;
+      setStats(temp_stats);
+    }
+
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
@@ -76,7 +79,11 @@ function MatchDetailed(props) {
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = match.set.last();
       cur_set[winner]++;
-      if (p != p1_serving) stats[winner].break_points_won++;
+      // check break point won
+      if (p != p1_serving) {
+        temp_stats[winner].break_points_won++;
+        setStats(temp_stats);
+      }
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
