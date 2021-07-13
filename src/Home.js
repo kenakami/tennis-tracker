@@ -5,6 +5,7 @@ import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-
 import { Ionicons } from '@expo/vector-icons'; 
 import Scoreboard from './components/Scoreboard';
 import util from './util';
+import Swipeable from 'react-native-swipeable-row';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch, deleteMatch, clear, setMatches } from './features/matches/matchesSlice';
@@ -257,29 +258,39 @@ function Home(props) {
       </View>
     )
   }
+
+  const rightButtons = [
+    <TouchableOpacity style = {styles.deleteButton}> 
+      <Text style = {{marginLeft: '4%', color: 'white', fontSize: 15, fontWeight: '400'}}>
+        Delete
+      </Text>
+    </TouchableOpacity>
+  ];
   
   return (
     <SafeAreaView style = {{flex: 1}}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         {
           matches.map((match, index) => (
-            <TouchableOpacity
-              onPress={() => {
-                if (match.info.done) return;
-                if (match.info.simple) {
-                  props.navigation.navigate('Match Simple', {
-                    index: index
-                  })
-                } else {
-                  props.navigation.navigate('Match Detailed', {
-                    index: index
-                  })
-                }
-              }}
-              key={index}
-            >
-              <Scoreboard match={match}/>
-            </TouchableOpacity>
+            <Swipeable rightButtons={rightButtons}>
+              <TouchableOpacity
+                onPress={() => {
+                  if (match.info.done) return;
+                  if (match.info.simple) {
+                    props.navigation.navigate('Match Simple', {
+                      index: index
+                    })
+                  } else {
+                    props.navigation.navigate('Match Detailed', {
+                      index: index
+                    })
+                  }
+                }}
+                key={index}
+              >
+                <Scoreboard match={match}/>
+              </TouchableOpacity>
+            </Swipeable>
           ))
         }
         <Modal
@@ -360,6 +371,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  deleteButton: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'red',
+    marginVertical: 3,
+    marginTop: '4%'
+  }
 });
 
 export default Home;
