@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput, KeyboardAvoidingView} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput, KeyboardAvoidingView, TouchableHighlight} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
 import Scoreboard from './components/Scoreboard';
 import util from './util';
+import Swipeable from 'react-native-swipeable-row';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch, deleteMatch, clear, setMatches } from './features/matches/matchesSlice';
@@ -196,6 +197,7 @@ function Home(props) {
         </View>
         <TouchableOpacity
           onPress={() => {
+            console.log(p1_serving)
             let new_match = {
               score: empty_score,
               info: {
@@ -257,12 +259,22 @@ function Home(props) {
       </View>
     )
   }
+
+  const rightButtons = [
+    <TouchableOpacity style = {styles.deleteButton}> 
+      <Text style = {{marginLeft: '4%', color: 'white', fontSize: 15, fontWeight: '400'}}>
+        Delete
+      </Text>
+    </TouchableOpacity>
+  ];
+   
   
   return (
     <SafeAreaView style = {{flex: 1}}>
       <ScrollView contentContainerStyle={{flexGrow: 1}}>
         {
           matches.map((match, index) => (
+          <Swipeable rightButtons={rightButtons}>
             <TouchableOpacity
               onPress={() => {
                 if (match.info.done) return;
@@ -280,6 +292,7 @@ function Home(props) {
             >
               <Scoreboard match={match}/>
             </TouchableOpacity>
+          </Swipeable>
           ))
         }
         <Modal
@@ -360,6 +373,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  deleteButton: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'red',
+    marginVertical: 3,
+    marginTop: '4%'
+  }
 });
 
 export default Home;

@@ -96,13 +96,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {(stats.p1.total_first_serves == 0) ? 0 : Math.round(stats.p1.first_serve_win / stats.p1.first_serve * 100)}%
+            {(stats.p1.first_serve == 0) ? 0 : Math.round(stats.p1.first_serve_win / stats.p1.first_serve * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 1st serve
           </Text>
           <Text style={styles.rightText}>
-            {(stats.p2.total_first_serves == 0) ? 0 : Math.round(stats.p2.first_serve_win / stats.p2.first_serve * 100)}%
+            {(stats.p2.first_serve == 0) ? 0 : Math.round(stats.p2.first_serve_win / stats.p2.first_serve * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -118,13 +118,11 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {stats.p1.break_points_won}
           </Text>
           <Text style={styles.middleText}>
             Break points Won
           </Text>
           <Text style={styles.rightText}>
-            {stats.p2.break_points_won}
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
