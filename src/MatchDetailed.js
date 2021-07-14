@@ -189,18 +189,53 @@ function MatchDetailed(props) {
   const handleWinners = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
     let server = score.p1_serving ? 'p1' : 'p2';
-    let receiver = score.p1_serving ? 'p2' : 'p1';
+    let winner = p ? 'p1' : 'p2';
+    temp[winner].winners++
+    temp[winner].points_won++
+    if (server == winner) {
+      temp[winner].total_serve_wins++
+      if (info.first_serve) {
+        temp[winner].first_serve_wins++
+      }
+    }
     point(p)
+    backToFirstService()
     setStats(temp);
   }
 
   const handleForcedError = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
+    let server = score.p1_serving ? 'p1' : 'p2';
+    let player_forced_error = p ? 'p1' : 'p2';
+    let winner = !p ? 'p1' : 'p2';
+    temp[player_forced_error].forced_errors++
+    temp[winner].points_won++
+    if (server == winner) {
+      temp[winner].total_serve_wins++
+      if (info.first_serve) {
+        temp[winner].first_serve_wins++
+      }
+    }
+    point(!p)
+    backToFirstService()
     setStats(temp);
   }
 
   const handleUnforcedError = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
+    let server = score.p1_serving ? 'p1' : 'p2';
+    let player_unforced_error = p ? 'p1' : 'p2';
+    let winner = !p ? 'p1' : 'p2';
+    temp[player_unforced_error].unforced_errors++
+    temp[winner].points_won++
+    if (server == winner) {
+      temp[winner].total_serve_wins++
+      if (info.first_serve) {
+        temp[winner].first_serve_wins++
+      }
+    }
+    point(!p)
+    backToFirstService()
     setStats(temp);
   }
 
