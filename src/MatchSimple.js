@@ -54,8 +54,9 @@ function MatchSimple(props) {
   const point = (p) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
-    let match = JSON.parse(JSON.stringify(score));    // copy current score into match
-    let cur_game = match.set.last().game.last();
+    let temp_score = JSON.parse(JSON.stringify(score));    // copy current score into match
+    let cur_game = temp_score.set.last().game.last();
+
     cur_game[winner]++;
     cur_game.point.push(p);
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
@@ -64,33 +65,35 @@ function MatchSimple(props) {
     }
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
-      let cur_set = match.set.last();
+      let cur_set = temp_score.set.last();
       cur_set[winner]++;
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
-        match[winner]++;
+        temp_score[winner]++;
         // Match
-        if (Math.max(match.p1, match.p2) >= Math.trunc(info.best_of / 2) + 1) {
-          setInfo({ ...info, done: true });
-          setScore(match);
-          alert(`Game, Set, Match!\nWon by ${p ? this.state.p1_name : this.state.p2_name}`);
+        if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(info.best_of / 2) + 1) {
+          //setInfo({ ...info, done: true });
+          temp_score.done = true;
+          setScore(temp_score);
+          alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
         }
-        match.set.push({
+        temp_score.set.push({
           game: [],
           p1: 0,
           p2: 0,
         });
       }
-      setInfo({ ...info, p1_serving: !info.p1_serving });
-      match.set.last().game.push({
+      // setInfo({ ...info, p1_serving: !info.p1_serving });
+      temp_score.p1_serving = !score.p1_serving;
+      temp_score.set.last().game.push({
         point: [],
         p1: 0,
         p2: 0,
       });
     }
-    setScore({ ...match });
+    setScore({ ...temp_score });
   }
 
   return (

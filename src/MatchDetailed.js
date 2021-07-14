@@ -58,14 +58,8 @@ function MatchDetailed(props) {
   const point = (p) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
-    let match = JSON.parse(JSON.stringify(score));    // copy current score into match
-    let cur_game = match.set.last().game.last();
-    let temp_stats = JSON.parse(JSON.stringify(stats));    // copy current score into match
-
-    // check break point
-    if (cur_game[!info.p1_serving] >= 3 && cur_game[info.p1_serving] <= 2) {
-      temp_stats[winner].break_points_total++;
-    }
+    let temp_score = JSON.parse(JSON.stringify(score));    // copy current score into match
+    let cur_game = temp_score.set.last().game.last();
 
     cur_game[winner]++;
     cur_game.point.push(p);
@@ -75,36 +69,35 @@ function MatchDetailed(props) {
     }
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
-      let cur_set = match.set.last();
+      let cur_set = temp_score.set.last();
       cur_set[winner]++;
-      if (p != info.p1_serving) stats[winner].break_points_won++;
-      setStats(temp_stats);
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
-        match[winner]++;
+        temp_score[winner]++;
         // Match
-        if (Math.max(match.p1, match.p2) >= Math.trunc(info.best_of / 2) + 1) {
-          setInfo({ ...info, done: true });
-          setScore(match);
+        if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(info.best_of / 2) + 1) {
+          //setInfo({ ...info, done: true });
+          temp_score.done = true;
+          setScore(temp_score);
           alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
         }
-        match.set.push({
+        temp_score.set.push({
           game: [],
           p1: 0,
           p2: 0,
         });
       }
-      setInfo({ ...info, p1_serving: !info.p1_serving });
-      match.set.last().game.push({
+      // setInfo({ ...info, p1_serving: !info.p1_serving });
+      temp_score.p1_serving = !score.p1_serving;
+      temp_score.set.last().game.push({
         point: [],
         p1: 0,
         p2: 0,
       });
     }
-    setScore({ ...match });
-    setStats(temp_stats);
+    setScore({ ...temp_score });
   }
 
   const backToFirstService = () => {
@@ -400,8 +393,8 @@ function MatchDetailed(props) {
           {info.p2_name}
         </Text>
       </View>
-      {info.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
-      {!info.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
+      {score.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
+      {!score.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
       {info.state == "Ball in Play" ? renderBallIn() : null}
     </SafeAreaView>
   );
