@@ -111,206 +111,59 @@ function MatchDetailed(props) {
     setInfo({ ...info, state: 'First Service', first_serve: true});
   }
 
-  const handleFault = () => {
+  const handleAce = () => {
     let temp = JSON.parse(JSON.stringify(stats));
-    if (info.state == "Second Service") {
-      setInfo({ ...info, state: 'First Service', first_serve: true});
-      point(!info.p1_serving)
-      if (info.p1_serving) {
-        temp.p1.double_faults++
-        temp.p2.points_won++
-        temp.p1.unforced_errors++
-      } else {
-        temp.p2.double_faults++
-        temp.p1.points_won++
-        temp.p2.unforced_errors++
-      }
+    let server = info.p1_serving ? 'p1' : 'p2';
+    backToFirstService()
+    point(info.p1_serving)
+    temp[server].aces++
+    temp[server].winners++
+    temp[server].points_won++
+    if (info.first_serve) {
+      temp[server].first_serve_in++
+      temp[server].first_serve_total++
+      temp[server].first_serve_wins++
     } else {
-      setInfo({ ...info, state: 'Second Service', first_serve: false});
-      if (info.p1_serving) {
-        temp.p1.total_first_serves++
-        temp.p1.total_second_serves++
-      } else {
-        temp.p2.total_first_serves++
-        temp.p2.total_second_serves++
-      }
+      temp[server].second_serve_in++
+      temp[server].second_serve_win++
     }
     setStats(temp);
-    console.log(stats);
+  }
+
+  const handleFault = () => {
+    let temp = JSON.parse(JSON.stringify(stats));
+
+    setStats(temp);
   }
 
   const handleBallIn = () => {
-    setInfo({ ...info, state: 'Ball in Play' });
     let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving & info.state == "First Service") {
-      temp.p1.total_first_serves++
-      temp.p1.first_serve++
-    } else if (info.p2_serving & info.state == "First Service") {
-      temp.p2.total_first_serves++
-      temp.p2.first_serve++
-    }
     setStats(temp);
-    console.log(stats)
-  }
-
-  const handleAce = () => {
-    backToFirstService()
-    point(info.p1_serving)
-    let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
-      temp.p1.aces++
-      temp.p1.winners++
-      temp.p1.points_won++
-      if (info.state == "First Service") {
-        temp.p1.first_serve++
-        temp.p1.total_first_serves++
-        temp.p1.first_serve_win++
-      } else {
-        temp.p1.second_serve_win++
-      }
-    } else {
-      temp.p2.aces++
-      temp.p2.winners++
-      temp.p2.points_won++
-      if (info.state == "First Service") {
-        temp.p2.first_serve++
-        temp.p2.total_first_serves++
-        temp.p2.first_serve_win++
-      } else {
-        temp.p2.second_serve_win++
-      }
-    }
-    setStats(temp);
-    console.log(stats)
   }
 
   const handleReturnWinner = () => {
-    backToFirstService()
-    point(!info.p1_serving)
     let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
-      temp.p2.winners++
-      temp.p2.points_won++
-      if (info.state == "First Service") {
-        temp.p1.first_serve++
-        temp.p1.total_first_serves++
-      }
-    } else {
-      temp.p1.winners++
-      temp.p1.points_won++
-      if (info.state == "First Service") {
-        temp.p2.first_serve++
-        temp.p2.total_first_serves++
-      }
-    }
     setStats(temp);
-    console.log(stats)
   }
 
   const handleReturnError = () => {
-    backToFirstService()
-    point(info.p1_serving)
     let temp = JSON.parse(JSON.stringify(stats));
-    if (info.p1_serving) {
-      if (info.state == "First Service") {
-        temp.p2.forced_errors++
-        temp.p1.total_first_serves++
-        temp.p1.first_serve++
-        temp.p1.first_serve_win++
-      } else {
-        temp.p2.unforced_errors++
-        temp.p1.second_serve_win++
-      }
-      temp.p1.points_won++
-    } else {
-      if (info.state == "First Service") {
-        temp.p1.forced_errors++
-        temp.p2.total_first_serves++
-        temp.p2.first_serve++
-        temp.p2.first_serve_win++
-      } else {
-        temp.p1.unforced_errors++
-        temp.p2.second_serve_win++
-      }
-      temp.p2.points_won++
-    }
     setStats(temp);
-    console.log(stats)
   }
 
   const handleWinners = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
-    if (p) {
-      temp.p1.winners++
-      temp.p1.points_won++
-      if (info.p1_serving & info.first_serve) {
-        temp.p1.first_serve_win++
-      } else if (info.p1_serving & !info.first_serve) {
-        temp.p1.second_serve_win++
-      }
-    } else {
-      temp.p2.winners++
-      temp.p2.points_won++
-      if (!info.p1_serving & info.first_serve) {
-        temp.p2.first_serve_win++
-      } else if (!info.p1_serving & !info.first_serve) {
-        temp.p2.second_serve_win++
-      }
-    }
-    backToFirstService()
-    point(p)
     setStats(temp);
-    console.log(stats)
   }
 
   const handleForcedError = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
-    if (p) {
-      temp.p1.forced_errors++
-      temp.p2.points_won++
-      if (!info.p1_serving & info.first_serve) {
-        temp.p2.first_serve_win++
-      } else if (!info.p1_serving & !info.first_serve) {
-        temp.p2.second_serve_win++
-      }
-    } else {
-      temp.p2.forced_errors++
-      temp.p1.points_won++
-      if (info.p1_serving & info.first_serve) {
-        temp.p1.first_serve_win++
-      } else if (info.p1_serving & !info.first_serve) {
-        temp.p1.second_serve_win++
-      }
-    }
-    backToFirstService()
-    point(!p)
     setStats(temp);
-    console.log(stats)
   }
 
   const handleUnforcedError = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
-    if (p) {
-      temp.p1.unforced_errors++
-      temp.p2.points_won++
-      if (!info.p1_serving & info.first_serve) {
-        temp.p2.first_serve_win++
-      } else if (!info.p1_serving & !info.first_serve) {
-        temp.p2.second_serve_win++
-      }
-    } else {
-      temp.p2.unforced_errors++
-      temp.p1.points_won++
-      if (info.p1_serving & info.first_serve) {
-        temp.p1.first_serve_win++
-      } else if (info.p1_serving & !info.first_serve) {
-        temp.p1.second_serve_win++
-      }
-    }
-    backToFirstService()
-    point(!p)
     setStats(temp);
-    console.log(stats)
   }
 
   const actionSheet = () =>

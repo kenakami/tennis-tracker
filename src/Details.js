@@ -52,13 +52,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {(stats.p1.total_first_serves == 0) ? 0 : Math.round(stats.p1.first_serve / stats.p1.total_first_serves * 100)}%
+            {(stats.p1.first_serve_total == 0) ? 0 : Math.round(stats.p1.first_serve_in / stats.p1.first_serve_total * 100)}%
           </Text>
           <Text style={styles.middleText}>
             First serve %
           </Text>
           <Text style={styles.rightText}>
-            {(stats.p2.total_first_serves == 0) ? 0 : Math.round(stats.p2.first_serve / stats.p2.total_first_serves * 100)}%
+            {(stats.p2.first_serve_total == 0) ? 0 : Math.round(stats.p2.first_serve_in / stats.p2.first_serve_total * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -96,24 +96,24 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {(stats.p1.first_serve == 0) ? 0 : Math.round(stats.p1.first_serve_win / stats.p1.first_serve * 100)}%
+            {(stats.p1.first_serve_in == 0) ? 0 : Math.round(stats.p1.first_serve_wins / stats.p1.first_serve_in * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 1st serve
           </Text>
           <Text style={styles.rightText}>
-            {(stats.p2.first_serve == 0) ? 0 : Math.round(stats.p2.first_serve_win / stats.p2.first_serve * 100)}%
+            {(stats.p2.first_serve_in == 0) ? 0 : Math.round(stats.p2.first_serve_wins / stats.p2.first_serve_in * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {(stats.p1.total_second_serves == 0) ? 0 : Math.round(stats.p1.second_serve_win / stats.p1.total_second_serves * 100)}%
+            {(stats.p1.second_serve_in == 0) ? 0 : Math.round(stats.p1.second_serve_wins / stats.p1.second_serve_in * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 2nd serve
           </Text>
           <Text style={styles.rightText}>
-            {(stats.p2.total_second_serves == 0) ? 0 : Math.round(stats.p2.second_serve_win / stats.p2.total_second_serves * 100)}%
+            {(stats.p2.second_serve_in == 0) ? 0 : Math.round(stats.p2.second_serve_wins / stats.p2.second_serve_in * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
