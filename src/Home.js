@@ -35,8 +35,7 @@ const empty_stats = {
     first_serve_total: 0,
     first_serve_wins: 0,
 
-    second_serve_in: 0,
-    second_serve_wins: 0,
+    total_serve_wins: 0,
 
     winners: 0,
     unforced_errors: 0,
@@ -52,8 +51,7 @@ const empty_stats = {
     first_serve_total: 0,
     first_serve_wins: 0,
 
-    second_serve_in: 0,
-    second_serve_wins: 0,
+    total_serve_wins: 0,
 
     winners: 0,
     unforced_errors: 0,

@@ -107,13 +107,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {(stats.p1.second_serve_in == 0) ? 0 : Math.round(stats.p1.second_serve_wins / stats.p1.second_serve_in * 100)}%
+            {(stats.p1.first_serve_total - stats.p1.first_serve_in == 0) ? 0 : Math.round((stats.p1.total_serve_wins - stats.p1.first_serve_wins) / (stats.p1.first_serve_total - stats.p1.first_serve_in) * 100)}%
           </Text>
           <Text style={styles.middleText}>
             Win % on 2nd serve
           </Text>
           <Text style={styles.rightText}>
-            {(stats.p2.second_serve_in == 0) ? 0 : Math.round(stats.p2.second_serve_wins / stats.p2.second_serve_in * 100)}%
+            {(stats.p2.first_serve_total - stats.p2.first_serve_in == 0) ? 0 : Math.round((stats.p2.total_serve_wins - stats.p2.first_serve_wins) / (stats.p2.first_serve_total - stats.p2.first_serve_in) * 100)}%
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>

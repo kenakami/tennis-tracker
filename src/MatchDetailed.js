@@ -119,6 +119,7 @@ function MatchDetailed(props) {
     temp[server].aces++
     temp[server].winners++
     temp[server].points_won++
+    temp[server].total_serve_wins++
     if (info.first_serve) {
       temp[server].first_serve_in++
       temp[server].first_serve_total++
@@ -132,27 +133,71 @@ function MatchDetailed(props) {
 
   const handleFault = () => {
     let temp = JSON.parse(JSON.stringify(stats));
-
+    let server = info.p1_serving ? 'p1' : 'p2';
+    let receiver = info.p1_serving ? 'p2' : 'p1';
+    if (info.first_serve) {
+      setInfo({ ...info, state: 'Second Service', first_serve: false})
+      temp[server].first_serve_total++
+    } else {
+      point(!info.p1_serving)
+      setInfo({ ...info, state: 'First Service', first_serve: true})
+      temp[server].double_faults++
+      temp[server].unforced_errors++
+      temp[receiver].points_won++
+    }
     setStats(temp);
   }
 
   const handleBallIn = () => {
     let temp = JSON.parse(JSON.stringify(stats));
+    setInfo({ ...info, state: 'Ball in Play'})
+    let server = info.p1_serving ? 'p1' : 'p2';
+    if (info.state == "First Service") {
+      temp[server].first_serve_total++
+      temp[server].first_serve_in++
+    }
     setStats(temp);
   }
 
   const handleReturnWinner = () => {
     let temp = JSON.parse(JSON.stringify(stats));
+    let server = info.p1_serving ? 'p1' : 'p2';
+    let receiver = info.p1_serving ? 'p2' : 'p1';
+    point(!info.p1_serving)
+    backToFirstService()
+    temp[receiver].winners++
+    temp[receiver].points_won++
+    if (info.first_serve) {
+      temp[server].first_serve_total++
+      temp[server].first_serve_in++
+    }
     setStats(temp);
   }
 
   const handleReturnError = () => {
     let temp = JSON.parse(JSON.stringify(stats));
+    let server = info.p1_serving ? 'p1' : 'p2';
+    let receiver = info.p1_serving ? 'p2' : 'p1';
+    point(info.p1_serving)
+    backToFirstService()
+    temp[server].points_won++
+    temp[server].total_serve_wins++
+    if (info.first_serve) {
+      temp[server].first_serve_total++
+      temp[server].first_serve_in++
+      temp[server].first_serve_wins++
+      temp[receiver].forced_errors++
+    } else {
+      temp[receiver].unforced_errors++
+    }
     setStats(temp);
   }
 
   const handleWinners = (p) => {
     let temp = JSON.parse(JSON.stringify(stats));
+    let server = info.p1_serving ? 'p1' : 'p2';
+    let receiver = info.p1_serving ? 'p2' : 'p1';
+    point(p)
     setStats(temp);
   }
 
