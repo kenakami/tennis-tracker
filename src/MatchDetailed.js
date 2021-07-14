@@ -67,10 +67,22 @@ function MatchDetailed(props) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
     }
+    
+    // check breakpoints total
+    const server = score.p1_serving ? 'p1' : 'p2';
+    const receiver = !score.p1_serving ? 'p1' : 'p2';
+    if (cur_game[receiver] >= 3 && cur_game[server] < 3 && cur_game[winner] < 4) {
+      temp_score[!score.p1_serving ? 'p1_breakpoints_total' : 'p2_breakpoints_total']++;
+    }
+
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = temp_score.set.last();
       cur_set[winner]++;
+      // check breakpoints won
+      if (p != score.p1_serving) {
+        temp_score[p ? 'p1_breakpoints_won' : 'p2_breakpoints_won']++;
+      }
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {

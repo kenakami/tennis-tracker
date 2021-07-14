@@ -27,38 +27,34 @@ const empty_score = {
   p2: 0,
   p1_serving: true,
   done: false,
+  p1_breakpoints_total: 0,
+  p2_breakpoints_total: 0,
+  p1_breakpoints_won: 0,
+  p2_breakpoints_won: 0,
 }
 const empty_stats = {
   p1: {
     aces: 0,
     double_faults: 0,
-
     first_serve_in: 0,
     first_serve_total: 0,
     first_serve_wins: 0,
-
     total_serve_wins: 0,
-
     winners: 0,
     unforced_errors: 0,
     forced_errors: 0,
-
     points_won: 0,
   },
   p2: {
     aces: 0,
     double_faults: 0,
-
     first_serve_in: 0,
     first_serve_total: 0,
     first_serve_wins: 0,
-
     total_serve_wins: 0,
-
     winners: 0,
     unforced_errors: 0,
     forced_errors: 0,
-
     points_won: 0,
   },
 }
