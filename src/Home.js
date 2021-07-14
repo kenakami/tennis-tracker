@@ -82,6 +82,7 @@ function Home(props) {
     {label: 'Player 1 Serving', value: true},
     {label: 'Player 2 Serving', value: false}
   ];
+  const [isSwiping, setIsSwiping] = useState(false);
 
   useEffect(() => {
     // Same as componentDidMount
@@ -96,6 +97,10 @@ function Home(props) {
       dispatch(setMatches(res));
     });
   },[]);
+
+  useEffect(() => {
+    util.saveMatches(matches);
+  },[matches]);
 
   const reset = () => {
     setSimple(true);
@@ -212,6 +217,7 @@ function Home(props) {
                 state: 'First Service'
               },
               stats: empty_stats,
+              key: matches.length,
             }
             dispatch(addMatch({data: new_match}));
             setModal2Visible(false);
@@ -263,20 +269,23 @@ function Home(props) {
     )
   }
 
-  const rightButtons = [
-    <TouchableOpacity style = {styles.deleteButton}> 
+  const renderDeleteButton = (index) => (
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() => dispatch(deleteMatch({index: index}))}
+    >
       <Text style = {{marginLeft: '4%', color: 'white', fontSize: 15, fontWeight: '400'}}>
         Delete
       </Text>
     </TouchableOpacity>
-  ];
+  );
   
   return (
     <SafeAreaView style = {{flex: 1}}>
-      <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}} scrollEnabled={isSwiping}>
         {
           matches.map((match, index) => (
-            <Swipeable rightButtons={rightButtons}>
+            <Swipeable rightButtons={[renderDeleteButton(index)]}>
               <TouchableOpacity
                 onPress={() => {
                   if (match.info.done) return;
@@ -290,7 +299,6 @@ function Home(props) {
                     })
                   }
                 }}
-                key={index}
               >
                 <Scoreboard match={match}/>
               </TouchableOpacity>
