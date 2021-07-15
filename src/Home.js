@@ -25,12 +25,6 @@ const empty_score = {
   }],
   p1: 0,
   p2: 0,
-  p1_serving: true,
-  done: false,
-  p1_breakpoints_total: 0,
-  p2_breakpoints_total: 0,
-  p1_breakpoints_won: 0,
-  p2_breakpoints_won: 0,
 }
 const empty_stats = {
   p1: {
@@ -44,6 +38,8 @@ const empty_stats = {
     unforced_errors: 0,
     forced_errors: 0,
     points_won: 0,
+    breakpoints_total: 0,
+    breakpoints_won: 0,
   },
   p2: {
     aces: 0,
@@ -56,6 +52,8 @@ const empty_stats = {
     unforced_errors: 0,
     forced_errors: 0,
     points_won: 0,
+    breakpoints_total: 0,
+    breakpoints_won: 0,
   },
 }
 
@@ -106,17 +104,15 @@ function Home(props) {
 
   const createNewMatch = () => {
     return {
-      score: {
-        ...empty_score,
-        p1_serving: p1_serving,
-        done: false,
-      },
+      score: empty_score,
       info: {
         p1_name: p1_name,
         p2_name: p2_name,
         simple: simple,
+        p1_serving: p1_serving,
         first_serve: true,
-        state: 'First Service'
+        state: 'First Service',
+        done: false,
       },
       stats: empty_stats,
     }

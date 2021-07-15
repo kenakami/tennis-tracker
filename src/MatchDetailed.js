@@ -54,33 +54,35 @@ function MatchDetailed(props) {
     util.storeData('matches', matches);
   },[matches]);
 
-  const pointNew = (p, temp_score) => {
+  /**
+   * Awards point to player p, and updates score, info, and breakpoint stats
+   * @param {boolean} p Player that won; true = p1, false = p2
+   * @param {object} temp_score Current score
+   * @param {object} temp_info Current info
+   * @param {object} temp_stats Current stats
+   * @return {array} Contains the resulting score, info, and stats
+   */
+  const pointNew = (p, temp_score, temp_info, temp_stats) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
     let cur_game = temp_score.set.last().game.last();
 
     cur_game[winner]++;
     cur_game.point.push(p);
+    // check breakpoints
+    if (cur_game[convert[!info.p1_serving]] >= 3 && cur_game[convert[info.p1_serving]] < 3 && cur_game[convert[p]] < 4) {
+      temp_stats[convert[!info.p1_serving]].breakpoints_total++;
+    }
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
     }
-    
-    // check breakpoints total
-    const server = score.p1_serving ? 'p1' : 'p2';
-    const receiver = !score.p1_serving ? 'p1' : 'p2';
-    if (cur_game[receiver] >= 3 && cur_game[server] < 3 && cur_game[winner] < 4) {
-      temp_score[!score.p1_serving ? 'p1_breakpoints_total' : 'p2_breakpoints_total']++;
-    }
-
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
+      // check breakpoints won
+      if (p == !info.p1_serving) temp_stats[convert[p]].breakpoints_won++;
       let cur_set = temp_score.set.last();
       cur_set[winner]++;
-      // check breakpoints won
-      if (p != score.p1_serving) {
-        temp_score[p ? 'p1_breakpoints_won' : 'p2_breakpoints_won']++;
-      }
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
@@ -88,7 +90,7 @@ function MatchDetailed(props) {
         // Match
         if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(info.best_of / 2) + 1) {
           //setInfo({ ...info, done: true });
-          temp_score.done = true;
+          temp_info.done = true;
           alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
         }
@@ -99,14 +101,14 @@ function MatchDetailed(props) {
         });
       }
       // setInfo({ ...info, p1_serving: !score.p1_serving });
-      temp_score.p1_serving = !score.p1_serving;
+      temp_info.p1_serving = !info.p1_serving;
       temp_score.set.last().game.push({
         point: [],
         p1: 0,
         p2: 0,
       });
     }
-    return temp_score
+    return [temp_score, temp_info, temp_stats];
   }
 
   /**
@@ -129,8 +131,8 @@ function MatchDetailed(props) {
     let temp_score = JSON.parse(JSON.stringify(score));
     let temp_info = JSON.parse(JSON.stringify(info));
     let temp_stats = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let receiver = !score.p1_serving ? 'p1' : 'p2';
+    let server = info.p1_serving ? 'p1' : 'p2';
+    let receiver = !info.p1_serving ? 'p1' : 'p2';
     switch(id) {
       case 'ball_in':
         temp_info.state = 'Ball in Play';
@@ -145,7 +147,7 @@ function MatchDetailed(props) {
           temp_info.first_serve = false;
           temp_stats[server].first_serve_total++
         } else {
-          temp_score = pointNew(!p, temp_score)
+          [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
           temp_info = backToFirstServe(temp_info);
           temp_stats[server].double_faults++
           temp_stats[server].unforced_errors++
@@ -153,7 +155,7 @@ function MatchDetailed(props) {
         }
         break;
       case 'ace':
-        temp_score = pointNew(p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
         temp_stats[server].aces++
         temp_stats[server].winners++
         temp_stats[server].points_won++
@@ -169,7 +171,7 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_winner':
-        temp_score = pointNew(p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
         temp_stats[receiver].winners++
         temp_stats[receiver].points_won++
         if (info.first_serve) {
@@ -179,7 +181,7 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_error':
-        temp_score = pointNew(!p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
         temp_stats[server].points_won++
         temp_stats[server].total_serve_wins++
         if (info.first_serve) {
@@ -201,7 +203,7 @@ function MatchDetailed(props) {
             temp_stats[convert[p]].first_serve_wins++
           }
         }
-        temp_score = pointNew(p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
         temp_info = backToFirstServe(temp_info);
         break;
       case 'forced_error':
@@ -213,7 +215,7 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        temp_score = pointNew(!p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
         temp_info = backToFirstServe(temp_info);
         break;
       case 'unforced_error':
@@ -225,7 +227,7 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        temp_score = pointNew(!p, temp_score);
+        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
         temp_info = backToFirstServe(temp_info);
         break;
     }
@@ -316,7 +318,7 @@ function MatchDetailed(props) {
       );
     } else {
       //  p1 is serving
-      if (score.p1_serving) {
+      if (info.p1_serving) {
         return(
           <View style={{ height: '88%', flexDirection: 'row' }}>
             {renderServer(true)}
