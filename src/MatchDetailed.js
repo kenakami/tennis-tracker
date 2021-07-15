@@ -8,11 +8,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch } from './features/matches/matchesSlice';
 
 const convert = {
-  0: 0,
-  1: 15,
-  2: 30,
-  3: 40,
-  4: 'Ad',
+  true: 'p1',
+  false: 'p2',
+  'p1': true,
+  'p2': false,
 }
 
 Array.prototype.last = function () {
@@ -55,10 +54,9 @@ function MatchDetailed(props) {
     util.storeData('matches', matches);
   },[matches]);
 
-  const point = (p) => {
+  const pointNew = (p, temp_score) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
-    let temp_score = JSON.parse(JSON.stringify(score));    // copy current score into match
     let cur_game = temp_score.set.last().game.last();
 
     cur_game[winner]++;
@@ -91,7 +89,6 @@ function MatchDetailed(props) {
         if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(info.best_of / 2) + 1) {
           //setInfo({ ...info, done: true });
           temp_score.done = true;
-          setScore(temp_score);
           alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
         }
@@ -109,321 +106,243 @@ function MatchDetailed(props) {
         p2: 0,
       });
     }
-    setScore({ ...temp_score });
+    return temp_score
   }
 
-  const backToFirstService = () => {
-    setInfo({ ...info, state: 'First Service', first_serve: true});
+  /**
+   * Update server and the state of the match and return updated info
+   * @param {object} temp_info current info
+   * @return {object} updated info
+   */
+  const backToFirstServe = (temp_info) => {
+    temp_info.state = 'First Service';
+    temp_info.first_serve = true;
+    return temp_info;
   }
 
-  const handleAce = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
+  /**
+   * Update stats and score based on user input
+   * @param {string} id describes the input
+   * @param {boolean} p player associated; true = p1, false = p2
+   */
+  const handleOnPress = (id, p) => {
+    let temp_score = JSON.parse(JSON.stringify(score));
+    let temp_info = JSON.parse(JSON.stringify(info));
+    let temp_stats = JSON.parse(JSON.stringify(stats));
     let server = score.p1_serving ? 'p1' : 'p2';
-    point(score.p1_serving)
-    temp[server].aces++
-    temp[server].winners++
-    temp[server].points_won++
-    temp[server].total_serve_wins++
-    if (info.first_serve) {
-      temp[server].first_serve_in++
-      temp[server].first_serve_total++
-      temp[server].first_serve_wins++
-    } else {
-      temp[server].second_serve_in++
-      temp[server].second_serve_win++
-    }
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const handleFault = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let receiver = score.p1_serving ? 'p2' : 'p1';
-    if (info.first_serve) {
-      setInfo({ ...info, state: 'Second Service', first_serve: false})
-      temp[server].first_serve_total++
-    } else {
-      point(!score.p1_serving)
-      backToFirstService()
-      temp[server].double_faults++
-      temp[server].unforced_errors++
-      temp[receiver].points_won++
-    }
-    setStats(temp);
-  }
-
-  const handleBallIn = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    setInfo({ ...info, state: 'Ball in Play'})
-    let server = score.p1_serving ? 'p1' : 'p2';
-    if (info.state == "First Service") {
-      temp[server].first_serve_total++
-      temp[server].first_serve_in++
-    }
-    setStats(temp);
-  }
-
-  const handleReturnWinner = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let receiver = score.p1_serving ? 'p2' : 'p1';
-    point(!score.p1_serving)
-    temp[receiver].winners++
-    temp[receiver].points_won++
-    if (info.first_serve) {
-      temp[server].first_serve_total++
-      temp[server].first_serve_in++
-    }
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const handleReturnError = () => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let receiver = score.p1_serving ? 'p2' : 'p1';
-    point(score.p1_serving)
-    temp[server].points_won++
-    temp[server].total_serve_wins++
-    if (info.first_serve) {
-      temp[server].first_serve_total++
-      temp[server].first_serve_in++
-      temp[server].first_serve_wins++
-      temp[receiver].forced_errors++
-    } else {
-      temp[receiver].unforced_errors++
-    }
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const handleWinners = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let winner = p ? 'p1' : 'p2';
-    temp[winner].winners++
-    temp[winner].points_won++
-    if (server == winner) {
-      temp[winner].total_serve_wins++
-      if (info.first_serve) {
-        temp[winner].first_serve_wins++
-      }
-    }
-    point(p)
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const handleForcedError = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let player_forced_error = p ? 'p1' : 'p2';
-    let winner = !p ? 'p1' : 'p2';
-    temp[player_forced_error].forced_errors++
-    temp[winner].points_won++
-    if (server == winner) {
-      temp[winner].total_serve_wins++
-      if (info.first_serve) {
-        temp[winner].first_serve_wins++
-      }
-    }
-    point(!p)
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const handleUnforcedError = (p) => {
-    let temp = JSON.parse(JSON.stringify(stats));
-    let server = score.p1_serving ? 'p1' : 'p2';
-    let player_unforced_error = p ? 'p1' : 'p2';
-    let winner = !p ? 'p1' : 'p2';
-    temp[player_unforced_error].unforced_errors++
-    temp[winner].points_won++
-    if (server == winner) {
-      temp[winner].total_serve_wins++
-      if (info.first_serve) {
-        temp[winner].first_serve_wins++
-      }
-    }
-    point(!p)
-    backToFirstService()
-    setStats(temp);
-  }
-
-  const actionSheet = () =>
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ["Cancel", "Generate number", "Reset"],
-        destructiveButtonIndex: 2,
-        cancelButtonIndex: 0,
-        userInterfaceStyle: 'dark'
-      },
-      buttonIndex => {
-        if (buttonIndex === 0) {
-          // cancel action
-        } else if (buttonIndex === 1) {
-        } else if (buttonIndex === 2) {
+    let receiver = !score.p1_serving ? 'p1' : 'p2';
+    switch(id) {
+      case 'ball_in':
+        temp_info.state = 'Ball in Play';
+        if (info.first_serve) {
+          temp_stats[server].first_serve_total++
+          temp_stats[server].first_serve_in++
         }
+        break;
+      case 'fault':
+        if (info.first_serve) {
+          temp_info.state = 'Second Service';
+          temp_info.first_serve = false;
+          temp_stats[server].first_serve_total++
+        } else {
+          temp_score = pointNew(!p, temp_score)
+          temp_info = backToFirstServe(temp_info);
+          temp_stats[server].double_faults++
+          temp_stats[server].unforced_errors++
+          temp_stats[receiver].points_won++
+        }
+        break;
+      case 'ace':
+        temp_score = pointNew(p, temp_score);
+        temp_stats[server].aces++
+        temp_stats[server].winners++
+        temp_stats[server].points_won++
+        temp_stats[server].total_serve_wins++
+        if (info.first_serve) {
+          temp_stats[server].first_serve_in++
+          temp_stats[server].first_serve_total++
+          temp_stats[server].first_serve_wins++
+        } else {
+          temp_stats[server].second_serve_in++
+          temp_stats[server].second_serve_win++
+        }
+        temp_info = backToFirstServe(temp_info);
+        break;
+      case 'return_winner':
+        temp_score = pointNew(p, temp_score);
+        temp_stats[receiver].winners++
+        temp_stats[receiver].points_won++
+        if (info.first_serve) {
+          temp_stats[server].first_serve_total++
+          temp_stats[server].first_serve_in++
+        }
+        temp_info = backToFirstServe(temp_info);
+        break;
+      case 'return_error':
+        temp_score = pointNew(!p, temp_score);
+        temp_stats[server].points_won++
+        temp_stats[server].total_serve_wins++
+        if (info.first_serve) {
+          temp_stats[server].first_serve_total++
+          temp_stats[server].first_serve_in++
+          temp_stats[server].first_serve_wins++
+          temp_stats[receiver].forced_errors++
+        } else {
+          temp_stats[receiver].unforced_errors++
+        }
+        temp_info = backToFirstServe(temp_info);
+        break;
+      case 'winner':
+        temp_stats[convert[p]].winners++
+        temp_stats[convert[p]].points_won++
+        if (server == convert[p]) {
+          temp_stats[convert[p]].total_serve_wins++
+          if (info.first_serve) {
+            temp_stats[convert[p]].first_serve_wins++
+          }
+        }
+        temp_score = pointNew(p, temp_score);
+        temp_info = backToFirstServe(temp_info);
+        break;
+      case 'forced_error':
+        temp_stats[convert[p]].forced_errors++
+        temp_stats[convert[!p]].points_won++
+        if (server == convert[!p]) {
+          temp_stats[convert[!p]].total_serve_wins++
+          if (info.first_serve) {
+            temp_stats[convert[!p]].first_serve_wins++
+          }
+        }
+        temp_score = pointNew(!p, temp_score);
+        temp_info = backToFirstServe(temp_info);
+        break;
+      case 'unforced_error':
+        temp_stats[convert[p]].unforced_errors++
+        temp_stats[convert[!p]].points_won++
+        if (server == convert[!p]) {
+          temp_stats[convert[!p]].total_serve_wins++
+          if (info.first_serve) {
+            temp_stats[convert[!p]].first_serve_wins++
+          }
+        }
+        temp_score = pointNew(!p, temp_score);
+        temp_info = backToFirstServe(temp_info);
+        break;
+    }
+    setScore(temp_score);
+    setInfo(temp_info);
+    setStats(temp_stats);
+  }
+
+  const renderServer = (p) => {
+    return(
+      <View style={{ width: '50%', height: '100%' }}>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('ball_in', p)}>
+          <Text style={{ fontSize: 19, color: 'green' }}>
+            Ball in
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('fault', p)}>
+          <Text style={{ fontSize: 19, color: 'red' }}>
+            Fault
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('ace', p)}>
+          <Text style={{ fontSize: 19, color: 'green' }}>
+            Ace
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const renderReceiver = (p) => {
+    return(
+      <View style={{ width: '50%', height: '100%' }}>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('return_winner', p)}>
+          <Text style={{ fontSize: 19, color: 'green' }}>
+            Return Winner
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('return_error', p)}>
+          <Text style={{ fontSize: 19, color: 'red' }}>
+            Return Error
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const renderBallInPlay = (p) => {
+    return(
+      <View style={{ width: '50%', height: '100%' }}>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('winner', p)}>
+          <Text style={{ fontSize: 19, color: 'green' }}>
+            Winner
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('forced_error', p)}>
+          <Text style={{ fontSize: 19, color: 'red' }}>
+            Forced Error
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => handleOnPress('unforced_error', p)}>
+          <Text style={{ fontSize: 19, color: 'red' }}>
+            Unforced error
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  
+  const renderUndo = () => {
+    return(
+      <TouchableOpacity style={styles.button}>
+        <Text style={{ fontSize: 19 }}>
+          Undo
+        </Text>
+      </TouchableOpacity>
+    );
+  }
+  
+  const renderColumns = () => {
+    // Ball in Play
+    if (info.state == 'Ball in Play') {
+      return(
+        <View style={{ height: '88%', flexDirection: 'row' }}>
+          {renderBallInPlay(true)}
+          {renderBallInPlay(false)}
+        </View>
+      );
+    } else {
+      //  p1 is serving
+      if (score.p1_serving) {
+        return(
+          <View style={{ height: '88%', flexDirection: 'row' }}>
+            {renderServer(true)}
+            {renderReceiver(false)}
+          </View>
+        );
       }
-    );
-  const renderServer1 = () => {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
-        <View style={{ height: '88%', flexDirection: 'row' }}>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => { handleBallIn() }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Ball in
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => { handleFault() }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Fault
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleAce()
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Ace
-              </Text>
-            </TouchableOpacity>
+      // p2 is serving
+      else {
+        return(
+          <View style={{ height: '88%', flexDirection: 'row' }}>
+            {renderReceiver(true)}
+            {renderServer(false)}
           </View>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleReturnWinner()
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Return Winner
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleReturnError()
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Return Error
-              </Text>
-            </TouchableOpacity>
-
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={{ fontSize: 19 }}>
-            Undo
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
+        );
+      }
+    }
   }
 
-  const renderServer2 = () => {
+  const renderInput = () => {
     return (
       <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
-        <View style={{ height: '88%', flexDirection: 'row' }}>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleReturnWinner()
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Return Winner
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleReturnError()
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Return Error
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => { handleBallIn() }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Ball in
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => { handleFault() }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Fault
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleAce()
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Ace
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={{ fontSize: 19 }}>
-            Undo
-          </Text>
-        </TouchableOpacity>
+        {renderColumns()}
+        {renderUndo()}
       </View>
-    );
-  }
-
-  const renderBallIn = () => {
-    return (
-      <View style={{ flex: 1, backgroundColor: '#6495ed' }}>
-        <View style={{ height: '88%', flexDirection: 'row' }}>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleWinners(true)
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Winner
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleForcedError(true)
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Forced Error
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleUnforcedError(true)
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Unforced error
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ width: '50%', height: '100%' }}>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleWinners(false)
-            }}>
-              <Text style={{ fontSize: 19, color: 'green' }}>
-                Winner
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleForcedError(false)
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Forced Error
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => {
-              handleUnforcedError(false)
-            }}>
-              <Text style={{ fontSize: 19, color: 'red' }}>
-                Unforced error
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TouchableOpacity style={styles.button}>
-          <Text style={{ fontSize: 19 }}>
-            Undo
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
+    )
   }
 
   return (
@@ -440,9 +359,7 @@ function MatchDetailed(props) {
           {info.p2_name}
         </Text>
       </View>
-      {score.p1_serving & info.state != "Ball in Play" ? renderServer1() : null}
-      {!score.p1_serving & info.state != "Ball in Play" ? renderServer2() : null}
-      {info.state == "Ball in Play" ? renderBallIn() : null}
+      {renderInput()}
     </SafeAreaView>
   );
 
