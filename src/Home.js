@@ -78,7 +78,6 @@ function Home(props) {
     {label: 'Player 1 Serving', value: true},
     {label: 'Player 2 Serving', value: false}
   ];
-  const [isSwiping, setIsSwiping] = useState(false);
 
   useEffect(() => {
     // Same as componentDidMount
@@ -284,7 +283,7 @@ function Home(props) {
   
   return (
     <SafeAreaView style = {{flex: 1}}>
-      <ScrollView contentContainerStyle={{flexGrow: 1}} scrollEnabled={isSwiping}>
+      <ScrollView contentContainerStyle={{flexGrow: 1}} >
         {
           matches.map((match, index) => (
             <Swipeable rightButtons={[renderDeleteButton(index)]}>
