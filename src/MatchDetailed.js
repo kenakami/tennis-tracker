@@ -69,22 +69,12 @@ function MatchDetailed(props) {
 
     cur_game[winner]++;
     cur_game.point.push(p);
-    // check breakpoints
-    /*
-    if (cur_game[convert[!info.p1_serving]] >= 3 && cur_game[convert[info.p1_serving]] < 3 && cur_game[convert[p]] < 4) {
-      temp_stats[convert[!info.p1_serving]].breakpoints_total++;
-    }
-    */
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
     }
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
-      // check breakpoints won
-      /*
-      if (p == !info.p1_serving) temp_stats[convert[p]].breakpoints_won++;
-      */
       let cur_set = temp_score.set.last();
       cur_set[winner]++;
       // Set
@@ -93,7 +83,6 @@ function MatchDetailed(props) {
         temp_score[winner]++;
         // Match
         if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(info.best_of / 2) + 1) {
-          //setInfo({ ...info, done: true });
           temp_info.done = true;
           alert(`Game, Set, Match!\nWon by ${p ? info.p1_name : info.p2_name}`);
           return;
@@ -104,7 +93,6 @@ function MatchDetailed(props) {
           p2: 0,
         });
       }
-      // setInfo({ ...info, p1_serving: !score.p1_serving });
       temp_info.p1_serving = !info.p1_serving;
       temp_score.set.last().game.push({
         point: [],
@@ -416,3 +404,4 @@ const styles = StyleSheet.create({
 
 
 export default MatchDetailed;
+
