@@ -18,6 +18,8 @@ Array.prototype.last = function () {
   return this[this.length - 1];
 };
 
+let history = [];
+
 function MatchDetailed(props) {
   const matches = useSelector((state) => state.matches.array)
   const dispatch = useDispatch()
@@ -28,6 +30,10 @@ function MatchDetailed(props) {
   const [stats, setStats] = useState(matches[index].stats);
 
   useEffect(() => {
+    let temp_score = JSON.parse(JSON.stringify(score));
+    temp_score.set.last().game.last().server = info.p1_serving;
+    setScore(temp_score);
+
     props.navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => props.navigation.navigate('Details', {
@@ -38,6 +44,9 @@ function MatchDetailed(props) {
       ),
       headerRightContainerStyle: { marginRight: '4%' }
     })
+  },[]);
+
+  useEffect(() => {
     dispatch(setMatch({
       index: props.route.params.index,
       data: {
@@ -59,16 +68,17 @@ function MatchDetailed(props) {
    * @param {boolean} p Player that won; true = p1, false = p2
    * @param {object} temp_score Current score
    * @param {object} temp_info Current info
-   * @param {object} temp_stats Current stats
    * @return {array} Contains the resulting score, info, and stats
    */
-  const pointNew = (p, temp_score, temp_info) => {
+  const pointNew = (p, temp_score, temp_info, history) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
     let cur_game = temp_score.set.last().game.last();
-
     cur_game[winner]++;
-    cur_game.point.push(p);
+    cur_game.point.push({
+      outcome: p,
+      history: history
+    });
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
@@ -98,6 +108,7 @@ function MatchDetailed(props) {
         point: [],
         p1: 0,
         p2: 0,
+        server: temp_info.p1_serving,
       });
     }
     return [temp_score, temp_info];
@@ -141,9 +152,10 @@ function MatchDetailed(props) {
     let temp_stats = JSON.parse(JSON.stringify(stats));
     let server = info.p1_serving ? 'p1' : 'p2';
     let receiver = !info.p1_serving ? 'p1' : 'p2';
-    let winner;
+    let point_complete, winner;
     switch(id) {
       case 'ball_in':
+        point_complete = false;
         temp_info.state = 'Ball in Play';
         if (info.first_serve) {
           temp_stats[server].first_serve_total++
@@ -152,13 +164,13 @@ function MatchDetailed(props) {
         break;
       case 'fault':
         if (info.first_serve) {
+          point_complete = false;
           temp_info.state = 'Second Service';
           temp_info.first_serve = false;
           temp_stats[server].first_serve_total++
         } else {
+          point_complete = true;
           winner = !p;
-          [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-          [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
           temp_info = backToFirstServe(temp_info);
           temp_stats[server].double_faults++
           temp_stats[server].unforced_errors++
@@ -166,9 +178,8 @@ function MatchDetailed(props) {
         }
         break;
       case 'ace':
+        point_complete = true;
         winner = p;
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[server].aces++
         temp_stats[server].winners++
         temp_stats[server].points_won++
@@ -184,9 +195,8 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_winner':
+        point_complete = true;
         winner = p;
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[receiver].winners++
         temp_stats[receiver].points_won++
         if (info.first_serve) {
@@ -196,9 +206,8 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_error':
+        point_complete = true;
         winner = !p;
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[server].points_won++
         temp_stats[server].total_serve_wins++
         if (info.first_serve) {
@@ -212,6 +221,7 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'winner':
+        point_complete = true;
         winner = p;
         temp_stats[convert[p]].winners++
         temp_stats[convert[p]].points_won++
@@ -221,11 +231,10 @@ function MatchDetailed(props) {
             temp_stats[convert[p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
       case 'forced_error':
+        point_complete = true;
         winner = !p;
         temp_stats[convert[p]].forced_errors++
         temp_stats[convert[!p]].points_won++
@@ -235,11 +244,10 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
       case 'unforced_error':
+        point_complete = true;
         winner = !p;
         temp_stats[convert[p]].unforced_errors++
         temp_stats[convert[!p]].points_won++
@@ -249,10 +257,14 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
-        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
+    }
+    history.push(id);
+    if (point_complete) {
+      [temp_score, temp_info] = pointNew(winner, temp_score, temp_info, history);
+      [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
+      history = [];
     }
     setScore(temp_score);
     setInfo(temp_info);
