@@ -123,7 +123,8 @@ function MatchDetailed(props) {
       return [temp_info, temp_stats];
     }
     // check breakpoints
-    if (cur_game[convert[!info.p1_serving]] >= 3 && cur_game[convert[info.p1_serving]] < 3) {
+    if (cur_game[convert[!info.p1_serving]] >= 3 &&
+        cur_game[convert[!info.p1_serving]] - cur_game[convert[info.p1_serving]] >= 1) {
       temp_info.breakpoint = true;
       temp_stats[convert[!temp_info.p1_serving]].breakpoints_total++;
     }
