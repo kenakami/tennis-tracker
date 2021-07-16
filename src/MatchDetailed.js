@@ -62,7 +62,7 @@ function MatchDetailed(props) {
    * @param {object} temp_stats Current stats
    * @return {array} Contains the resulting score, info, and stats
    */
-  const pointNew = (p, temp_score, temp_info, temp_stats) => {
+  const pointNew = (p, temp_score, temp_info) => {
     if (info.done) return;
     const winner = p ? 'p1' : 'p2';
     let cur_game = temp_score.set.last().game.last();
@@ -70,9 +70,11 @@ function MatchDetailed(props) {
     cur_game[winner]++;
     cur_game.point.push(p);
     // check breakpoints
+    /*
     if (cur_game[convert[!info.p1_serving]] >= 3 && cur_game[convert[info.p1_serving]] < 3 && cur_game[convert[p]] < 4) {
       temp_stats[convert[!info.p1_serving]].breakpoints_total++;
     }
+    */
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
@@ -80,7 +82,9 @@ function MatchDetailed(props) {
     // Game
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       // check breakpoints won
+      /*
       if (p == !info.p1_serving) temp_stats[convert[p]].breakpoints_won++;
+      */
       let cur_set = temp_score.set.last();
       cur_set[winner]++;
       // Set
@@ -108,7 +112,23 @@ function MatchDetailed(props) {
         p2: 0,
       });
     }
-    return [temp_score, temp_info, temp_stats];
+    return [temp_score, temp_info];
+  }
+
+  const updateBreakpoint = (p, temp_score, temp_info, temp_stats) => {
+    // check breakpoints won with previous info
+    let cur_game = temp_score.set.last().game.last();
+    if (info.breakpoint && cur_game.p1 == 0 && cur_game.p2 == 0) {
+      temp_info.breakpoint = false;
+      temp_stats[convert[p]].breakpoints_won++;
+      return [temp_info, temp_stats];
+    }
+    // check breakpoints
+    if (cur_game[convert[!info.p1_serving]] >= 3 && cur_game[convert[info.p1_serving]] < 3) {
+      temp_info.breakpoint = true;
+      temp_stats[convert[!temp_info.p1_serving]].breakpoints_total++;
+    }
+    return [temp_info, temp_stats];
   }
 
   /**
@@ -133,6 +153,7 @@ function MatchDetailed(props) {
     let temp_stats = JSON.parse(JSON.stringify(stats));
     let server = info.p1_serving ? 'p1' : 'p2';
     let receiver = !info.p1_serving ? 'p1' : 'p2';
+    let winner;
     switch(id) {
       case 'ball_in':
         temp_info.state = 'Ball in Play';
@@ -147,7 +168,9 @@ function MatchDetailed(props) {
           temp_info.first_serve = false;
           temp_stats[server].first_serve_total++
         } else {
-          [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
+          winner = !p;
+          [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+          [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
           temp_info = backToFirstServe(temp_info);
           temp_stats[server].double_faults++
           temp_stats[server].unforced_errors++
@@ -155,7 +178,9 @@ function MatchDetailed(props) {
         }
         break;
       case 'ace':
-        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
+        winner = p;
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[server].aces++
         temp_stats[server].winners++
         temp_stats[server].points_won++
@@ -171,7 +196,9 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_winner':
-        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
+        winner = p;
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[receiver].winners++
         temp_stats[receiver].points_won++
         if (info.first_serve) {
@@ -181,7 +208,9 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'return_error':
-        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
+        winner = !p;
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_stats[server].points_won++
         temp_stats[server].total_serve_wins++
         if (info.first_serve) {
@@ -195,6 +224,7 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
       case 'winner':
+        winner = p;
         temp_stats[convert[p]].winners++
         temp_stats[convert[p]].points_won++
         if (server == convert[p]) {
@@ -203,10 +233,12 @@ function MatchDetailed(props) {
             temp_stats[convert[p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info, temp_stats] = pointNew(p, temp_score, temp_info, temp_stats)
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
       case 'forced_error':
+        winner = !p;
         temp_stats[convert[p]].forced_errors++
         temp_stats[convert[!p]].points_won++
         if (server == convert[!p]) {
@@ -215,10 +247,12 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
       case 'unforced_error':
+        winner = !p;
         temp_stats[convert[p]].unforced_errors++
         temp_stats[convert[!p]].points_won++
         if (server == convert[!p]) {
@@ -227,7 +261,8 @@ function MatchDetailed(props) {
             temp_stats[convert[!p]].first_serve_wins++
           }
         }
-        [temp_score, temp_info, temp_stats] = pointNew(!p, temp_score, temp_info, temp_stats)
+        [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
+        [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
         temp_info = backToFirstServe(temp_info);
         break;
     }
