@@ -118,13 +118,13 @@ function Details(props) {
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
           <Text style={styles.leftText}>
-            {score.p1_breakpoints_won} / {score.p1_breakpoints_total}
+            {stats.p1.breakpoints_won} / {stats.p1.breakpoints_total}
           </Text>
           <Text style={styles.middleText}>
             Break points Won
           </Text>
           <Text style={styles.rightText}>
-            {score.p2_breakpoints_won} / {score.p2_breakpoints_total}
+            {stats.p2.breakpoints_won} / {stats.p2.breakpoints_total}
           </Text>
         </View>
         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>

@@ -51,10 +51,10 @@ class Scoreboard extends React.Component {
         <View style={{flexDirection: 'row'}}>
           <View style={{alignItems: 'center', width: 24}}>
             <Text style={styles.unit}>
-              {this.props.match.score.p1_serving ? '*' : null}
+              {this.props.match.info.p1_serving ? '*' : null}
             </Text>
             <Text style={styles.unit}>
-              {this.props.match.score.p1_serving ? null : '*'}
+              {this.props.match.info.p1_serving ? null : '*'}
             </Text>
           </View>
           <View>
@@ -82,10 +82,10 @@ class Scoreboard extends React.Component {
         }
         <View style={styles.column_game} key={"point"}>
           <Text style={styles.unit}>
-            {this.props.match.score.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
+            {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p1]}
           </Text>
           <Text style={styles.unit}>
-            {this.props.match.score.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
+            {this.props.match.info.done ? 0 : convert[this.props.match.score.set.last().game.last().p2]}
           </Text>
         </View>
         </View>
