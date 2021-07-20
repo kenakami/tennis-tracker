@@ -20,7 +20,7 @@ Array.prototype.last = function () {
 };
 
 function MatchSimple(props) {
-  const matches = useSelector((state) => state.matches.array)
+  const matches = useSelector((state) => state.matches.present.array)
   const dispatch = useDispatch()
 
   const index = props.route.params.index

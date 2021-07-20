@@ -9,7 +9,7 @@ import { addMatch, setMatch, deleteMatch, clear } from './features/matches/match
 const Tab = createMaterialTopTabNavigator();
 
 function Details(props) {
-  const matches = useSelector((state) => state.matches.array)
+  const matches = useSelector((state) => state.matches.present.array)
   const dispatch = useDispatch()
 
   const index = props.route.params.index

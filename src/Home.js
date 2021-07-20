@@ -59,7 +59,7 @@ const empty_stats = {
 
 
 function Home(props) {
-  const matches = useSelector((state) => state.matches.array)
+  const matches = useSelector((state) => state.matches.present.array)
   const dispatch = useDispatch()
 
   const [modal1Visible, setModal1Visible] = useState(false);
@@ -86,6 +86,10 @@ function Home(props) {
     ),
     headerRightContainerStyle: {marginRight:'4%'}})
 
+    util.loadMatches().then((res) => {
+      dispatch(setMatches(res));
+    });
+    // only second time works idk why
     util.loadMatches().then((res) => {
       dispatch(setMatches(res));
     });
@@ -254,6 +258,14 @@ function Home(props) {
         <Button
           title="print matches"
           onPress={() => console.log(matches)}
+        />
+        <Button
+          title="print storage"
+          onPress={() => {
+            util.loadMatches().then((res) => {
+              console.log(res);
+            });
+          }}
         />
         <Button
           title="clear storage"
