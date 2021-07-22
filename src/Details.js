@@ -8,9 +8,23 @@ import { addMatch, setMatch, deleteMatch, clear } from './features/matches/match
 
 const Tab = createMaterialTopTabNavigator();
 
+const convert_score = {
+  0: 0,
+  1: 15,
+  2: 30,
+  3: 40,
+  4: 'Ad',
+}
+
+const convert_name = {
+  true: 'p1_name',
+  false: 'p2_name',
+}
+
 function Details(props) {
   const matches = useSelector((state) => state.matches.present.array)
   const dispatch = useDispatch()
+  let matchLog;
 
   const index = props.route.params.index
   const [score, setScore] = useState(matches[index].score);
@@ -153,6 +167,161 @@ function Details(props) {
     );
   }
 
+  const renderMatchLogNew = () => (
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      ref={ref => {matchLog = ref}}
+      onContentSizeChange={() => matchLog.scrollToEnd({animated: true})}
+    >
+      {renderSets(score.set)}
+    </ScrollView>
+  )
+
+  const pointToLog = (point, server_bool) => {
+    const server = info[convert_name[server_bool]];
+    const receiver = info[convert_name[!server]];
+    const winner = info[convert_name[point.outcome]];
+    const loser = info[convert_name[!point.outcome]];
+    let out = '';
+    point.history.forEach((id, index) => {
+      if (index > 0) out += '\n';
+      let serve = index == 0 ? 'first' : 'second';
+      switch(id) {
+        case 'ball_in':
+          out += `${server}'s ${serve} serve goes in.`;
+          break;
+        case 'fault':
+          out += `${server} misses ${serve} serve.`;
+          break;
+        case 'ace':
+          out += `${server} hits a ${serve} serve ace!`;
+          break;
+        case 'return_winner':
+          out += `${receiver} hits a return winner!`;
+          break;
+        case 'return_error':
+          out += `${receiver} hits a return error.`;
+          break;
+        case 'winner':
+          out += `${winner} hits a winner!`;
+          break;
+        case 'forced_error':
+          out += `${loser} hits a forced error.`;
+          break;
+        case 'unforced_error':
+          out += `${loser} hits an unforced error.`;
+          break;
+        default:
+          out += 'default';
+      }
+    });
+    return out;
+  }
+
+  const renderPoints = (points, game) => {
+    let [p1, p2] = [0, 0];
+    return (
+      points.map((point, index) => {
+        switch(point.outcome) {
+          case true:
+            p1++;
+            break;
+          case false:
+            p2++;
+            break;
+          default:
+        }
+        if (p1 == 4 && p2 == 4) {
+          [p1, p2] = [3, 3];
+        }
+        return(
+          <View style={{flexDirection: 'row'}}>
+            <View style={styles.pointScore}>
+              { !(game.outcome != null && index == points.length-1) &&
+              <Text style={{flex: 4, textAlign: 'center'}}>
+                {convert_score[p1]}
+              </Text>
+              }
+              <Text style={{flex: 1, textAlign: 'center'}}>
+                {game.outcome != null && index == points.length-1 ? 'game' : '-'}
+              </Text>
+              { !(game.outcome != null && index == points.length-1) &&
+              <Text style={{flex: 4, textAlign: 'center'}}>
+                {convert_score[p2]}
+              </Text>
+              }
+            </View>
+            <Text style={styles.pointDescription}>
+              {pointToLog(point, game.server)}
+            </Text>
+          </View>
+        )
+      })
+    );
+  }
+
+  const renderGames = (games) => {
+    let [p1, p2] = [0, 0];
+    return (
+      games.map((game, index) => {
+        switch(game.outcome) {
+          case true:
+            p1++;
+            break;
+          case false:
+            p2++;
+            break;
+          default:
+        }
+        return (
+        <View>
+        <View style={[styles.header, {backgroundColor: '#696969'}]}>
+          <Text style={{ marginLeft: '3%', fontSize: 17, color: 'white' }}>
+            Game {index+1}
+          </Text>
+          <Text style={{ marginRight: '3%', fontSize: 17, color: `white` }}>
+            {game.outcome == null ? 'in play' : p1+'-'+p2}
+          </Text>
+        </View>
+        <View style={{ marginLeft: '2%', padding: '2%' }}>
+          {renderPoints(game.point, game)}
+        </View>
+        </View>
+        )
+      })
+    );
+  }
+
+  const renderSets = (sets) => {
+    let [p1, p2] = [0, 0];
+    return (
+      sets.map((set, index) => {
+        switch(set.outcome) {
+          case true:
+            p1++;
+            break;
+          case false:
+            p2++;
+            break;
+          default:
+        }
+        return(
+        <View>
+        <View style={[styles.header, {backgroundColor: 'black'}]}>
+          <Text style={{ marginLeft: '3%', fontSize: 17, color: 'white' }}>
+            Set {index+1}
+          </Text>
+          <Text style={{ marginRight: '3%', fontSize: 17, color: `white` }}>
+            {set.outcome == null ? 'in play' : p1+'-'+p2}
+          </Text>
+        </View>
+          {renderGames(set.game)}
+        </View>
+        )
+      })
+    );
+  }
+
   const renderMatchLog = () => {
     return (
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -222,7 +391,6 @@ function Details(props) {
       <Tab.Navigator
         tabBarOptions={{
           labelStyle: { fontSize: 14, fontWeight: '700' },
-
           style: { borderWidth: 0, shadowColor: 'transparent', backgroundColor: 'transparent' },
           indicatorStyle: {
             backgroundColor: 'transparent',
@@ -231,11 +399,12 @@ function Details(props) {
         }}
       >
         <Tab.Screen name="Match Stats" component={renderStats} />
-        <Tab.Screen name="Match Log" component={renderMatchLog} />
+        <Tab.Screen name="Match Log" component={renderMatchLogNew} />
       </Tab.Navigator>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -260,12 +429,27 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: '5%'
   },
-  leftScore: {
-    marginLeft: '3%',
-    fontSize: 15,
+  pointScore: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    //marginLeft: '3%',
+    fontSize: 16,
+    flex: 1,
   },
-  description: {
-    fontSize: 15,
-  }
+  pointDescription: {
+    marginLeft: 12,
+    fontSize: 16,
+    flex: 6,
+  },
+  header: {
+    width: '100%',
+    height: 32,
+    backgroundColor: '#696969',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
 });
+
 export default Details;
+
