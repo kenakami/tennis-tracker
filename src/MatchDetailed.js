@@ -275,9 +275,6 @@ function MatchDetailed(props) {
         stats: temp_stats,
       },
     }));
-
-    console.log(temp_score.set.last().game.last().point);
-    console.log('--------------');
   }
 
   const renderServer = (p) => {
