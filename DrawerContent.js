@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Alert} from 'react-native';
 import {
     useTheme,
     Drawer,
@@ -10,11 +10,64 @@ import {
 } from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import firebase from './database/firebase';
 
 export function DrawerContent(props) {
 
     const paperTheme = useTheme();
 
+    if (props.logged_in) {
+        return (
+            <View style={{ flex: 1 }}>
+                <DrawerContentScrollView {...props}>
+                    <Drawer.Section>
+                        <DrawerItem
+                            icon={({ color, size }) => (
+                                <Icon
+                                    name="home-outline"
+                                    color={color}
+                                    size={size}
+                                />
+                            )}
+                            label="Home"
+                            onPress={() => {
+                                  props.navigation.navigate('Match History')
+                              }}
+                        />
+                        <DrawerItem
+                            icon={({ color, size }) => (
+                                <Icon
+                                    name="autorenew"
+                                    color={color}
+                                    size={size}
+                                />
+                            )}
+                            label="Sync"
+                        />
+                    </Drawer.Section>
+                </DrawerContentScrollView>
+                <Drawer.Section style={styles.bottomDrawerSection}>
+                    <DrawerItem
+                        icon={({ color, size }) => (
+                            <Icon
+                                name="exit-to-app"
+                                color={color}
+                                size={size}
+                            />
+                        )}
+                        label="Log Out"
+                        onPress={() => {
+                            firebase.auth().signOut().then(() => {
+                                props.navigation.navigate('Match History')
+                            })
+                            Alert.alert('Logged out!')
+                        }}
+                    />
+                </Drawer.Section>
+            </View>
+        );
+
+    }
     return (
         <View style={{ flex: 1 }}>
             <DrawerContentScrollView {...props}>
@@ -28,31 +81,26 @@ export function DrawerContent(props) {
                             />
                         )}
                         label="Home"
+                        onPress={() => {
+                            props.navigation.navigate('Match History')
+                        }}
                     />
                     <DrawerItem
                         icon={({ color, size }) => (
                             <Icon
-                                name="autorenew"
+                                name="login"
                                 color={color}
                                 size={size}
                             />
                         )}
-                        label="Sync Up"
+                        label="Log in"
+                        onPress={() => {
+                            props.navigation.navigate('Login')
+                        }}
+
                     />
                 </Drawer.Section>
             </DrawerContentScrollView>
-            <Drawer.Section style={styles.bottomDrawerSection}>
-                <DrawerItem
-                    icon={({ color, size }) => (
-                        <Icon
-                            name="exit-to-app"
-                            color={color}
-                            size={size}
-                        />
-                    )}
-                    label="Sign Out"
-                />
-            </Drawer.Section>
         </View>
     );
 }

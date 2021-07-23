@@ -43,12 +43,11 @@ function HomeScreen() {
 
 function App() {
   const [start, setStart] = useState('Login');
+  const [loggedin, setLoggedIn] = useState(false)
   firebase.auth().onAuthStateChanged((user) => {
-    console.log(user)
-    if (user) {
-      setStart('Match History')
-    }
-  });
+    setLoggedIn(Boolean(user))
+  })
+
 
   if (debug) {
     return (
@@ -64,7 +63,7 @@ function App() {
   return (
     <Provider store={store}>
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName='Match History' drawerContent={props => <DrawerContent {...props} />}>
+      <Drawer.Navigator initialRouteName='Match History' drawerContent={props => <DrawerContent {...props} logged_in={loggedin} />}>
         <Drawer.Screen name = "Match History" component={HomeScreen} />
       </Drawer.Navigator>
     </NavigationContainer>

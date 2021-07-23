@@ -29,12 +29,12 @@ export default class Login extends Component {
       .auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
-        console.log('User logged-in successfully!')
         this.setState({
           email: '', 
           password: ''
         })
         this.props.navigation.navigate('Match History')
+        Alert.alert('Logged in!')
       })
       .catch(error => {
         var errorCode = error.code

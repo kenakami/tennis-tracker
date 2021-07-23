@@ -12,7 +12,7 @@ import firebase from '../database/firebase';
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch, deleteMatch, clear, setMatches } from './features/matches/matchesSlice';
 
-const debug = 1;
+const debug = 0;
 const empty_score = {
   set: [{
     game: [

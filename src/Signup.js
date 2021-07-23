@@ -30,10 +30,13 @@ export default class Signup extends Component {
       .auth()
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
+        firebase.database().ref('/users/' + res.user.uid).set({
+          name: this.state.displayName,
+          email: this.state.email,
+        })
         res.user.updateProfile({
           displayName: this.state.displayName
         })
-        console.log('User registered successfully!')
         this.setState({
           displayName: '',
           email: '', 
