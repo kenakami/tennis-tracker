@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Scoreboard from './components/Scoreboard';
 import util from './util';
 import Swipeable from 'react-native-swipeable-row';
+import firebase from '../database/firebase';
 
 import { useSelector, useDispatch } from 'react-redux'
 import { addMatch, setMatch, deleteMatch, clear, setMatches } from './features/matches/matchesSlice';
@@ -84,6 +85,7 @@ function Home(props) {
         <AntDesign name="plus" size={21} color= "black"/>
       </TouchableOpacity>
     ),
+    gesturesEnabled: false,
     headerRightContainerStyle: {marginRight:'4%'}})
 
     util.loadMatches().then((res) => {
@@ -272,6 +274,14 @@ function Home(props) {
           onPress={() => {
             dispatch(clear());
             util.saveMatches([]);
+          }}
+        />
+        <Button
+          title="Log out"
+          onPress={() => {
+            firebase.auth().signOut().then(() => {
+              props.navigation.navigate('Login')
+            })
           }}
         />
       </View>
