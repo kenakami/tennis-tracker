@@ -28,10 +28,16 @@ const debug = 0;
 const Drawer = createDrawerNavigator();
 
 function HomeScreen() {
-  return  (
-    <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-      <Drawer.Screen name = "Match History" component={Home} />
-    </Drawer.Navigator>
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Match History" component={Home} />
+      <Stack.Screen name="Details" component={Details} />
+      <Stack.Screen name="Match Detailed" component={MatchDetailed} />
+      <Stack.Screen name="Match Simple" component={MatchSimple} />
+      <Stack.Screen name = "Signup" component = {Signup} options = {{title: 'Sign up'}}/>
+      <Stack.Screen name = "Login" component = {Login} options = {{title: "Log in "}}/>
+      <Stack.Screen name = "Dashboard" component = {Dashboard} />
+    </Stack.Navigator>
   )
 }
 
@@ -58,15 +64,9 @@ function App() {
   return (
     <Provider store={store}>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Match History'>
-        <Stack.Screen name="Match History" component={HomeScreen} />
-        <Stack.Screen name="Details" component={Details} />
-        <Stack.Screen name="Match Detailed" component={MatchDetailed} />
-        <Stack.Screen name="Match Simple" component={MatchSimple} />
-        <Stack.Screen name = "Signup" component = {Signup} options = {{title: 'Sign up'}}/>
-        <Stack.Screen name = "Login" component = {Login} options = {{title: "Log in "}}/>
-        <Stack.Screen name = "Dashboard" component = {Dashboard} />
-      </Stack.Navigator>
+      <Drawer.Navigator initialRouteName='Match History' drawerContent={props => <DrawerContent {...props} />}>
+        <Drawer.Screen name = "Match History" component={HomeScreen} />
+      </Drawer.Navigator>
     </NavigationContainer>
     </Provider>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, ScrollView , TouchableOpacity, Modal, Button, TextInput, KeyboardAvoidingView} from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import { Ionicons } from '@expo/vector-icons'; 
 import Scoreboard from './components/Scoreboard';
@@ -80,12 +81,19 @@ function Home(props) {
 
   useEffect(() => {
     // Same as componentDidMount
-    props.navigation.setOptions({headerRight: () => (
+    props.navigation.setOptions({
+      headerRight: () => (
       <TouchableOpacity onPress = {() => setModal1Visible(true)}>
         <AntDesign name="plus" size={21} color= "black"/>
       </TouchableOpacity>
     ),
+    headerLeft: () => (
+      <TouchableOpacity onPress = {() => props.navigation.toggleDrawer()}>
+        <Feather name="menu" size={24} color="black" />
+      </TouchableOpacity>
+    ),
     gesturesEnabled: false,
+    headerLeftContainerStyle: {marginLeft:'4%'},
     headerRightContainerStyle: {marginRight:'4%'}})
 
     util.loadMatches().then((res) => {
