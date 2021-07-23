@@ -108,9 +108,9 @@ function Home(props) {
     set_p2_name('Player 2');
   }
 
-  const createNewMatch = () => {
-    return {
-      score: empty_score,
+  const createNewMatch = (simple) => {
+    let temp = {
+      score: {...empty_score},
       info: {
         p1_name: p1_name,
         p2_name: p2_name,
@@ -120,8 +120,16 @@ function Home(props) {
         state: 'First Service',
         done: false,
       },
-      stats: empty_stats,
+      stats: {...empty_stats},
     }
+    if (!simple) {
+      temp.score.set[0].game[0].server = p1_serving;
+      temp.score.set[0].game[0].point.push({
+        outcome: null,
+        history: [],
+      });
+    }
+    return temp;
   }
 
   const renderModal1 = () => {
@@ -221,7 +229,7 @@ function Home(props) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            let new_match = createNewMatch();
+            let new_match = createNewMatch(simple);
             dispatch(addMatch({data: new_match}));
             setModal2Visible(false);
             if (simple) {

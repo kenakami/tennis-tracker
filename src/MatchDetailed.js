@@ -19,7 +19,6 @@ Array.prototype.last = function () {
   return this[this.length - 1];
 };
 
-let history = [];
 
 function MatchDetailed(props) {
   const matches = useSelector((state) => state.matches.present.array);
@@ -52,20 +51,28 @@ function MatchDetailed(props) {
   /**
    * Awards point to player p, and updates score, info, and breakpoint stats
    * @param {boolean} p Player that won; true = p1, false = p2
-   * @param {object} history History of the point; represented with id's
    * @param {object} temp_score Current score
    * @param {object} temp_info Current info
    * @return {array} Contains the resulting score, info, and stats
    */
-  const pointNew = (p, history, temp_score, temp_info) => {
+  const pointNew = (p, temp_score, temp_info) => {
     if (temp_info.done) return;
     const winner = p ? 'p1' : 'p2';
     let cur_game = temp_score.set.last().game.last();
     cur_game[winner]++;
+    /*
     cur_game.point.push({
       outcome: p,
       history: history
     });
+    */
+    if (cur_game.point.length == 0) {
+      cur_game.point.push({
+        outcome: null,
+        history: [],
+      });
+    }
+    cur_game.point.last().outcome = p;
     if (Math.min(cur_game.p1, cur_game.p2) >= 4 && cur_game.p1 == cur_game.p2) {
       cur_game.p1 = 3;
       cur_game.p2 = 3;
@@ -74,10 +81,12 @@ function MatchDetailed(props) {
     if (Math.abs(cur_game.p1 - cur_game.p2) >= 2 && Math.max(cur_game.p1, cur_game.p2) >= 4) {
       let cur_set = temp_score.set.last();
       cur_set[winner]++;
+      cur_set.game.last().outcome =  p;
       // Set
       // TODO tie breakers
       if (Math.abs(cur_set.p1 - cur_set.p2) >= 2 && Math.max(cur_set.p1, cur_set.p2) >= 6) {
         temp_score[winner]++;
+        temp_score.set.last().outcome = p;
         // Match
         if (Math.max(temp_score.p1, temp_score.p2) >= Math.trunc(temp_info.best_of / 2) + 1) {
           temp_info.done = true;
@@ -98,6 +107,11 @@ function MatchDetailed(props) {
         server: temp_info.p1_serving,
       });
     }
+    cur_game = temp_score.set.last().game.last();
+    cur_game.point.push({
+      outcome: null,
+      history: [],
+    });
     return [temp_score, temp_info];
   }
 
@@ -141,6 +155,7 @@ function MatchDetailed(props) {
     let server = temp_info.p1_serving ? 'p1' : 'p2';
     let receiver = !temp_info.p1_serving ? 'p1' : 'p2';
     let point_complete, winner;
+    temp_score.set.last().game.last().point.last().history.push(id);
     switch(id) {
       case 'ball_in':
         point_complete = false;
@@ -248,11 +263,9 @@ function MatchDetailed(props) {
         temp_info = backToFirstServe(temp_info);
         break;
     }
-    history.push(id);
     if (point_complete) {
-      [temp_score, temp_info] = pointNew(winner, history, temp_score, temp_info);
+      [temp_score, temp_info] = pointNew(winner, temp_score, temp_info);
       [temp_info, temp_stats] = updateBreakpoint(winner, temp_score, temp_info, temp_stats);
-      history = [];
     }
     dispatch(setMatch({
       index: props.route.params.index,
