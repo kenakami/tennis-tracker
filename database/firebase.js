@@ -1,15 +1,20 @@
 import * as firebase from 'firebase';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDL6Dk1Bo4HLe6ox7ljJSVzjkLIyy9h-cM",
-    authDomain: "tennis-tracker-75666.firebaseapp.com",
-    projectId: "tennis-tracker-75666",
-    storageBucket: "tennis-tracker-75666.appspot.com",
-    messagingSenderId: "266985960725",
-    appId: "1:266985960725:web:36de3a2bceb3e1015a651c",
-    measurementId: "G-9TF9XH1Q35"
+    apiKey: "AIzaSyAloP7cwHozhwLcJgPz37_ER9i1y8CmsgA",
+    authDomain: "tennis-tracker-bc314.firebaseapp.com",
+    databaseURL: "https://tennis-tracker-bc314-default-rtdb.firebaseio.com",
+    projectId: "tennis-tracker-bc314",
+    storageBucket: "tennis-tracker-bc314.appspot.com",
+    messagingSenderId: "679204524877",
+    appId: "1:679204524877:web:2cec9dde713054b9001d04",
+    measurementId: "G-3W14DWK2C2"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+ }else {
+    firebase.app(); // if already initialized, use that one
+ }
 
 export default firebase;
