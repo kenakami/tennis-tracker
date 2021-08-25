@@ -130,6 +130,7 @@ function Home(props) {
       },
       stats: {...empty_stats},
     }
+    temp = JSON.parse(JSON.stringify(temp))
     if (!simple) {
       temp.score.set[0].game[0].server = p1_serving;
       temp.score.set[0].game[0].point.push({
